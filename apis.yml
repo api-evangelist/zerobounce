@@ -1,0 +1,73 @@
+aid: zerobounce
+name: ZeroBounce
+description: >-
+  ZeroBounce is an email validation and deliverability platform that verifies
+  email addresses, detects spam traps and abuse accounts, scores leads, and
+  helps senders reduce bounce rates and protect sender reputation. The
+  platform provides real-time and batch email validation, credit balance
+  checks, file-based validation jobs, email finder, domain search, and AI
+  scoring through a versioned REST API. The ZeroBounce v2 API uses a per-
+  request api_key parameter and supports both global and EU endpoints.
+type: Index
+image: https://kinlane-productions.s3.amazonaws.com/apis-json/apis-json-logo.jpg
+tags:
+  - Email Validation
+  - Email Deliverability
+  - Email Verification
+  - Marketing
+  - Lead Scoring
+  - Anti-Spam
+url: >-
+  https://raw.githubusercontent.com/api-evangelist/zerobounce/refs/heads/main/apis.yml
+created: '2026-05-11'
+modified: '2026-05-11'
+specificationVersion: '0.19'
+apis:
+  - aid: zerobounce:email-validation-api
+    name: ZeroBounce Email Validation API
+    description: >-
+      Real-time and batch email validation API including credit balance, API
+      usage, file submission and retrieval, email finder, domain search, and
+      AI scoring endpoints. Authenticated via api_key query parameter.
+    humanURL: https://www.zerobounce.net/docs/email-validation-api-quickstart
+    baseURL: https://api.zerobounce.net/v2
+    tags:
+      - Email Validation
+      - Email Deliverability
+      - Lead Scoring
+    properties:
+      - type: Documentation
+        url: https://www.zerobounce.net/docs/email-validation-api-quickstart
+      - type: Quickstart
+        url: https://www.zerobounce.net/docs/email-validation-api-quickstart/v2-validate-emails
+      - type: Sandbox Mode
+        url: https://www.zerobounce.net/docs/email-validation-api-quickstart/v2-sandbox-mode
+  - aid: zerobounce:email-validation-api-eu
+    name: ZeroBounce Email Validation API (EU)
+    description: >-
+      EU-region endpoint of the ZeroBounce v2 email validation API for
+      customers requiring European data residency.
+    humanURL: https://www.zerobounce.net/docs/email-validation-api-quickstart
+    baseURL: https://api-eu.zerobounce.net/v2
+    tags:
+      - Email Validation
+      - EU Region
+      - Data Residency
+    properties:
+      - type: Documentation
+        url: https://www.zerobounce.net/docs/email-validation-api-quickstart
+
+common:
+  - type: Website
+    url: https://www.zerobounce.net
+  - type: Documentation
+    url: https://www.zerobounce.net/docs
+  - type: Pricing
+    url: https://www.zerobounce.net/pricing
+  - type: Sign Up
+    url: https://www.zerobounce.net/members/createaccount
+  - type: GitHub
+    url: https://github.com/zerobounce
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com
