@@ -64,7 +64,7 @@ common:
     url: https://www.zerobounce.net/docs
   - type: Pricing
     url: https://www.zerobounce.net/pricing
-  - type: Sign Up
+  - type: SignUp
     url: https://www.zerobounce.net/members/createaccount
   - type: GitHub
     url: https://github.com/zerobounce
