@@ -58,6 +58,8 @@ apis:
         url: https://www.zerobounce.net/docs/email-validation-api-quickstart
 
 common:
+  - type: LinkedIn
+    url: https://www.linkedin.com/company/zerobounce-net
   - type: Website
     url: https://www.zerobounce.net
   - type: Documentation
