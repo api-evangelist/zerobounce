@@ -1,0 +1,40 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "ZeroBounce Validate Email plugin",
+    "version": "v1"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Validate an email address. Allows a maximum of 3 requests per day for an unauthenticated user. For more requests please register on ZeroBounce.net and get an API key - https://www.zerobounce.net/members/signin/register.",
+        "type": "http"
+      },
+      "http": {
+        "method": "POST",
+        "url": "https://members-api.zerobounce.net/api/validation/chatgpt-single-email-validation/",
+        "body": {
+          "type": "json",
+          "data": "{}"
+        }
+      },
+      "docs": "Validate an email address. Allows a maximum of 3 requests per day for an unauthenticated user. For more requests please register on ZeroBounce.net and get an API key - https://www.zerobounce.net/members/signin/register."
+    },
+    {
+      "info": {
+        "name": "Validate a list of email addresses. Requires a ZeroBounce API key. The user can get an API key by registering on ZeroBounce.net - https://www.zerobounce.net/members/signin/register.",
+        "type": "http"
+      },
+      "http": {
+        "method": "POST",
+        "url": "https://members-api.zerobounce.net/api/validation/chatgpt-batch-validation/",
+        "body": {
+          "type": "json",
+          "data": "{}"
+        }
+      },
+      "docs": "Validate a list of email addresses. Requires a ZeroBounce API key. The user can get an API key by registering on ZeroBounce.net - https://www.zerobounce.net/members/signin/register."
+    }
+  ],
+  "bundled": true
+}
