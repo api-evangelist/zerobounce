@@ -9,7 +9,7 @@ description: >-
   scoring through a versioned REST API. The ZeroBounce v2 API uses a per-
   request api_key parameter and supports both global and EU endpoints.
 type: Index
-image: https://kinlane-productions.s3.amazonaws.com/apis-json/apis-json-logo.jpg
+image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
 tags:
   - Email Validation
   - Email Deliverability
