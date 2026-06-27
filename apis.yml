@@ -38,9 +38,9 @@ apis:
     properties:
       - type: Documentation
         url: https://www.zerobounce.net/docs/email-validation-api-quickstart
-      - type: Quickstart
+      - type: GettingStarted
         url: https://www.zerobounce.net/docs/email-validation-api-quickstart/v2-validate-emails
-      - type: Sandbox Mode
+      - type: Sandbox
         url: https://www.zerobounce.net/docs/email-validation-api-quickstart/v2-sandbox-mode
   - aid: zerobounce:email-validation-api-eu
     name: ZeroBounce Email Validation API (EU)
@@ -66,7 +66,7 @@ common:
     url: https://www.zerobounce.net/docs
   - type: Pricing
     url: https://www.zerobounce.net/pricing
-  - type: SignUp
+  - type: Signup
     url: https://www.zerobounce.net/members/createaccount
   - type: GitHub
     url: https://github.com/zerobounce
