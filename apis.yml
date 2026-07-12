@@ -58,6 +58,12 @@ apis:
         url: https://www.zerobounce.net/docs/email-validation-api-quickstart
 
 common:
+  - type: TrustCenter
+    url: security/zerobounce-trust-center.yml
+  - type: VulnerabilityDisclosure
+    url: security/zerobounce-vulnerability-disclosure.yml
+  - type: DomainSecurity
+    url: security/zerobounce-domain-security.yml
   - type: LinkedIn
     url: https://www.linkedin.com/company/zerobounce-net
   - type: Website
@@ -70,6 +76,8 @@ common:
     url: https://www.zerobounce.net/members/createaccount
   - type: GitHub
     url: https://github.com/zerobounce
+  - url: https://www.zerobounce.net/blog/feed
+    type: Blog
 maintainers:
   - FN: Kin Lane
     email: kin@apievangelist.com
