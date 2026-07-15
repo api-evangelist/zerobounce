@@ -58,6 +58,8 @@ apis:
         url: https://www.zerobounce.net/docs/email-validation-api-quickstart
 
 common:
+  - type: AgenticAccess
+    url: agentic-access/zerobounce-agentic-access.yml
   - type: TrustCenter
     url: security/zerobounce-trust-center.yml
   - type: VulnerabilityDisclosure
