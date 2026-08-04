@@ -1,0 +1,14 @@
+{
+  "provider": "zerobounce",
+  "sources": [
+    "zerobounce-validation-api-openapi.yml"
+  ],
+  "outputs": [
+    "zerobounce-validation-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [],
+  "skipped": []
+}
