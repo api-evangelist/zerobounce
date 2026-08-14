@@ -5,21 +5,32 @@ description: >-
   email addresses, detects spam traps and abuse accounts, scores leads, and
   helps senders reduce bounce rates and protect sender reputation. The
   platform provides real-time and batch email validation, credit balance
-  checks, file-based validation jobs, email finder, domain search, and AI
-  scoring through a versioned REST API. The ZeroBounce v2 API uses a per-
-  request api_key parameter and supports both global and EU endpoints.
+  checks, file-based validation jobs, email finder, domain search, activity
+  data, list evaluation and AI scoring through a versioned REST API. The
+  ZeroBounce v2 API uses a per-request api_key parameter with no OAuth or
+  scopes, and is served from region-split hosts for US and EU data residency
+  plus a separate bulk host for asynchronous file jobs. ZeroBounce also ships
+  an official MCP server and first-party SDKs across nine languages.
 type: Index
 accessModel:
-  pricing: unknown
-  onboarding: unknown
-  trial: false
-  try_now: false
-  public: false
-  label: Unknown
-  confidence: low
-  source: []
-  generated: '2026-07-22'
-  method: derived
+  pricing: freemium
+  onboarding: self-service
+  trial: true
+  try_now: true
+  public: true
+  label: Freemium self-service
+  confidence: high
+  source:
+    - https://www.zerobounce.net/pricing
+    - https://www.zerobounce.net/members/createaccount
+    - https://www.zerobounce.net/free-email-verifier
+  generated: '2026-08-13'
+  method: searched
+  note: >-
+    Upgraded from unknown/derived. ZeroBounce publishes a permanent Freemium tier
+    (100 validation credits per month, refilling), self-service account creation, a
+    published price for the entry ZeroBounce ONE subscription ($99/month), and a
+    keyless browser verifier plus 3 free unauthenticated plugin validations per day.
 image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/zerobounce.png
 tags:
   - Email Validation
@@ -28,18 +39,24 @@ tags:
   - Marketing
   - Lead Scoring
   - Anti-Spam
+  - Data Quality
+  - Email Finder
+  - Deliverability Monitoring
+  - DMARC
 url: >-
   https://raw.githubusercontent.com/api-evangelist/zerobounce/refs/heads/main/apis.yml
 created: '2026-05-11'
-modified: '2026-05-11'
+modified: '2026-08-13'
 specificationVersion: '0.19'
 apis:
 - aid: zerobounce:email-validation-api
   name: ZeroBounce Email Validation API
   description: >-
     Real-time and batch email validation API including credit balance, API usage, file submission and
-    retrieval, email finder, domain search, and AI scoring endpoints. Authenticated via api_key query
-    parameter.
+    retrieval, email finder, domain search, activity data and AI scoring endpoints. Authenticated via
+    api_key query parameter. This entry covers the legacy api.zerobounce.net host, which ZeroBounce's
+    own endpoints documentation now describes as "the previous ZeroBounce endpoint", currently serving
+    EU validations and interactions only.
   humanURL: https://www.zerobounce.net/docs/email-validation-api-quickstart
   baseURL: https://api.zerobounce.net/v2
   tags:
@@ -49,15 +66,48 @@ apis:
   properties:
   - type: Documentation
     url: https://www.zerobounce.net/docs/email-validation-api-quickstart
+  - type: APIReference
+    url: https://www.zerobounce.net/docs/api-dashboard/api-endpoints
   - type: GettingStarted
     url: https://www.zerobounce.net/docs/email-validation-api-quickstart/v2-validate-emails
   - type: Sandbox
     url: https://www.zerobounce.net/docs/email-validation-api-quickstart/v2-sandbox-mode
+  - type: Authentication
+    url: authentication/zerobounce-authentication.yml
+  - type: RateLimits
+    url: rate-limits/zerobounce-rate-limits.yml
+  - type: ErrorCatalog
+    url: errors/zerobounce-error-codes.yml
+  - type: Conventions
+    url: conventions/zerobounce-conventions.yml
+  - type: DataModel
+    url: data-model/zerobounce-data-model.yml
+  - type: Webhooks
+    url: asyncapi/zerobounce-webhooks.yml
+- aid: zerobounce:email-validation-api-us
+  name: ZeroBounce Email Validation API (US)
+  description: >-
+    US-region endpoint of the ZeroBounce v2 email validation API. Introduced October 2025 alongside the
+    EU host so that, per ZeroBounce's own documentation, "validations and other interactions only occur
+    within the United States". Identical paths and parameters to the other regional hosts.
+  humanURL: https://www.zerobounce.net/docs/api-dashboard/api-endpoints
+  baseURL: https://api-us.zerobounce.net/v2
+  tags:
+  - Email Validation
+  - US Region
+  - Data Residency
+  properties:
+  - type: Documentation
+    url: https://www.zerobounce.net/docs/api-dashboard/api-endpoints
+  - type: Authentication
+    url: authentication/zerobounce-authentication.yml
+  - type: RateLimits
+    url: rate-limits/zerobounce-rate-limits.yml
 - aid: zerobounce:email-validation-api-eu
   name: ZeroBounce Email Validation API (EU)
   description: >-
     EU-region endpoint of the ZeroBounce v2 email validation API for customers requiring European data
-    residency.
+    residency, where validations and interactions occur only within the European Union.
   humanURL: https://www.zerobounce.net/docs/email-validation-api-quickstart
   baseURL: https://api-eu.zerobounce.net/v2
   tags:
@@ -67,16 +117,68 @@ apis:
   properties:
   - type: Documentation
     url: https://www.zerobounce.net/docs/email-validation-api-quickstart
+  - type: Authentication
+    url: authentication/zerobounce-authentication.yml
+  - type: RateLimits
+    url: rate-limits/zerobounce-rate-limits.yml
+- aid: zerobounce:bulk-api
+  name: ZeroBounce Bulk API
+  description: >-
+    Asynchronous file-job surface for bulk email validation, bulk AI scoring, bulk email finder, bulk
+    domain search, List Evaluator and Amazon S3 file operations. Runs on a separate, non-region-split
+    host and is the only part of the ZeroBounce API with a durable resource identifier (file_id) and a
+    completion callback (return_url).
+  humanURL: https://www.zerobounce.net/docs/email-validation-api-quickstart/v2-file-management-api
+  baseURL: https://bulkapi.zerobounce.net
+  tags:
+  - Email Validation
+  - Bulk Processing
+  - Webhooks
+  properties:
+  - type: Documentation
+    url: https://www.zerobounce.net/docs/email-validation-api-quickstart/v2-file-management-api
+  - type: Webhooks
+    url: asyncapi/zerobounce-webhooks.yml
+  - type: Authentication
+    url: authentication/zerobounce-authentication.yml
 - aid: zerobounce:zerobounce-validation-api
   name: ZeroBounce Validation API
-  description: The Validation API from ZeroBounce — 2 operation(s) for validation.
+  description: >-
+    The ZeroBounce ChatGPT-plugin validation surface — 2 operations for single and batch email
+    validation, served from members-api.zerobounce.net. The single-validation operation accepts up to 3
+    unauthenticated requests per day without an API key. This is the only ZeroBounce surface with a
+    published OpenAPI.
   humanURL: https://www.zerobounce.net/docs/email-validation-api-quickstart
-  baseURL: https://api.zerobounce.net/v2
+  baseURL: https://members-api.zerobounce.net
   tags:
   - Validation
   properties:
   - type: OpenAPI
     url: openapi/zerobounce-validation-api-openapi.yml
+  - type: Overlay
+    url: overlays/zerobounce-validation-api-overlay.yaml
+  - type: Documentation
+    url: https://www.zerobounce.net/docs/email-validation-api-quickstart
+- aid: zerobounce:mcp
+  name: ZeroBounce MCP Server
+  description: >-
+    Official ZeroBounce Model Context Protocol server, published by ZeroBounce under Apache-2.0 and
+    distributed on npm as @zerobounce/mcp. Exposes 16 tools covering validation, AI scoring, email
+    finder, domain search, activity data, credits and bulk file jobs. Local stdio transport only —
+    ZeroBounce publishes no hosted MCP endpoint.
+  humanURL: https://github.com/zerobounce/zerobounce-mcp
+  baseURL: https://github.com/zerobounce/zerobounce-mcp
+  tags:
+  - MCP
+  - AI Agents
+  - Email Validation
+  properties:
+  - type: MCPServer
+    url: mcp/zerobounce-mcp.yml
+  - type: ToolCrosswalk
+    url: mcp/zerobounce-tool-crosswalk.yml
+  - type: SourceCode
+    url: https://github.com/zerobounce/zerobounce-mcp
 common:
   - type: AgenticAccess
     url: agentic-access/zerobounce-agentic-access.yml
@@ -84,22 +186,87 @@ common:
     url: security/zerobounce-trust-center.yml
   - type: VulnerabilityDisclosure
     url: security/zerobounce-vulnerability-disclosure.yml
+  - type: Security
+    url: security/zerobounce-vulnerability-disclosure.yml
   - type: DomainSecurity
     url: security/zerobounce-domain-security.yml
+  - type: Compliance
+    url: conformance/zerobounce-conformance.yml
+  - type: Conformance
+    url: conformance/zerobounce-conformance.yml
   - type: LinkedIn
     url: https://www.linkedin.com/company/zerobounce-net
   - type: Website
     url: https://www.zerobounce.net
+  - type: DeveloperPortal
+    url: https://www.zerobounce.net/apis
   - type: Documentation
     url: https://www.zerobounce.net/docs
+  - type: APIReference
+    url: https://www.zerobounce.net/docs/api-dashboard/api-endpoints
+  - type: GettingStarted
+    url: https://www.zerobounce.net/docs/email-validation-api-quickstart/v2-validate-emails
+  - type: Support
+    url: https://www.zerobounce.net/contact-us
   - type: Pricing
     url: https://www.zerobounce.net/pricing
-  - type: Signup
+  - type: Plans
+    url: plans/zerobounce-plans-pricing.yml
+  - type: SignUp
     url: https://www.zerobounce.net/members/createaccount
+  - type: TermsOfService
+    url: https://www.zerobounce.net/terms-of-use
+  - type: PrivacyPolicy
+    url: https://www.zerobounce.net/privacy-policy
+  - type: GitHubOrganization
+    url: https://github.com/zerobounce
   - type: GitHub
     url: https://github.com/zerobounce
   - url: https://www.zerobounce.net/blog/feed
     type: Blog
+  - type: StatusPage
+    url: https://status.zerobounce.net
+  - type: Lifecycle
+    url: lifecycle/zerobounce-lifecycle.yml
+  - type: ChangeLog
+    url: changelog/zerobounce-changelog.yml
+  - type: Packages
+    url: packages/zerobounce-packages.yml
+  - type: SDKs
+    url: packages/zerobounce-packages.yml
+  - type: MCPServer
+    url: mcp/zerobounce-mcp.yml
+  - type: ToolCrosswalk
+    url: mcp/zerobounce-tool-crosswalk.yml
+  - type: AgentSkill
+    url: skills/_index.yml
+  - type: LLMsTxt
+    url: llms/zerobounce-llms.txt
+  - type: Authentication
+    url: authentication/zerobounce-authentication.yml
+  - type: Conventions
+    url: conventions/zerobounce-conventions.yml
+  - type: ErrorCatalog
+    url: errors/zerobounce-error-codes.yml
+  - type: RateLimits
+    url: rate-limits/zerobounce-rate-limits.yml
+  - type: Sandbox
+    url: sandbox/zerobounce-sandbox.yml
+  - type: DataModel
+    url: data-model/zerobounce-data-model.yml
+  - type: Webhooks
+    url: asyncapi/zerobounce-webhooks.yml
+  - type: Overlay
+    url: overlays/zerobounce-validation-api-overlay.yaml
+  - type: Postman
+    url: collections/zerobounce-api-v2-official.postman_collection.json
+  - type: Integrations
+    url: https://www.zerobounce.net/integrations
 maintainers:
   - FN: Kin Lane
     email: kin@apievangelist.com
+x-enrichment:
+  date: '2026-08-13'
+  status: enriched
+  artifacts_added: 22
+  pass: local-v1
