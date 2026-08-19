@@ -1,0 +1,153 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for the ZeroBounce Validation API
+  version: 1.0.0
+x-generated: '2026-08-13'
+x-method: generated
+x-source: openapi/zerobounce-validation-api-openapi.yml
+x-note: >-
+  Non-destructive Overlay 1.0.0 capturing API Evangelist enrichment of the ZeroBounce
+  ChatGPT-plugin OpenAPI. The original spec is never mutated. Every value below is drawn
+  from a ZeroBounce-published source already captured in this repo — the status-codes
+  reference, the sandbox page, the rate-limits page and the API error-codes page — or
+  from the spec itself. Nothing is invented. Notably this overlay does NOT correct the
+  string-typed booleans in validateEmailResponse; that is a real defect in the provider's
+  contract and is recorded in data-model/zerobounce-data-model.yml rather than papered
+  over here.
+extends: ../openapi/zerobounce-validation-api-openapi.yml
+actions:
+  - target: $.info
+    update:
+      x-api-evangelist:
+        slug: zerobounce
+        profile: https://apis.io/providers/zerobounce
+        scope: >-
+          This document describes the ZeroBounce ChatGPT-plugin validation endpoints on
+          members-api.zerobounce.net ONLY. It is not the production ZeroBounce v2 API,
+          which runs on api-us / api-eu / api.zerobounce.net and bulkapi.zerobounce.net
+          and has no published OpenAPI.
+        production_api_inventory: collections/zerobounce-api-v2-official.postman_collection.json
+        artifacts:
+          authentication: authentication/zerobounce-authentication.yml
+          conventions: conventions/zerobounce-conventions.yml
+          errors: errors/zerobounce-error-codes.yml
+          rate_limits: rate-limits/zerobounce-rate-limits.yml
+          sandbox: sandbox/zerobounce-sandbox.yml
+          plans: plans/zerobounce-plans-pricing.yml
+          data_model: data-model/zerobounce-data-model.yml
+          webhooks: asyncapi/zerobounce-webhooks.yml
+          mcp: mcp/zerobounce-mcp.yml
+          crosswalk: mcp/zerobounce-tool-crosswalk.yml
+          lifecycle: lifecycle/zerobounce-lifecycle.yml
+          conformance: conformance/zerobounce-conformance.yml
+
+  - target: $.info
+    update:
+      x-idempotency:
+        supported: false
+        note: >-
+          ZeroBounce publishes no idempotency key and no request deduplication. Retrying a
+          credit-consuming call spends credits again.
+      x-rate-limits:
+        documented: true
+        response_headers: none
+        status_on_exhaustion: 429
+        source: https://www.zerobounce.net/docs/api-dashboard/api-rate-limits
+
+  - target: $.paths['/api/validation/chatgpt-single-email-validation/'].post
+    update:
+      x-sandbox:
+        supported: true
+        mode: magic-identifiers
+        credits_consumed: 0
+        example_addresses:
+          - valid@example.com
+          - invalid@example.com
+          - catch_all@example.com
+          - spamtrap@example.com
+          - abuse@example.com
+          - donotmail@example.com
+          - unknown@example.com
+        test_ip: 99.110.204.1
+        source: https://www.zerobounce.net/docs/email-validation-api-quickstart/v2-sandbox-mode
+      x-agent-cost:
+        unit: credit
+        credits_per_call: 1
+        free_allowance: >-
+          Up to 3 unauthenticated calls per day without an api_key, per the operation's own
+          summary in the original spec.
+
+  - target: $.paths['/api/validation/chatgpt-batch-validation/'].post
+    update:
+      x-agent-cost:
+        unit: credit
+        credits_per_email: 1
+        requires_api_key: true
+      x-batch-limits:
+        max_items: 100
+        note: >-
+          The production /v2/validatebatch endpoint caps a batch at 100 addresses and 30
+          requests per minute (40 on ZeroBounce ONE). The plugin spec declares no cap.
+        source: https://www.zerobounce.net/docs/api-dashboard/api-rate-limits
+
+  - target: $.components.schemas.validateEmailResponse.properties.status
+    update:
+      x-enum-values:
+        - valid
+        - invalid
+        - catch-all
+        - spamtrap
+        - abuse
+        - do_not_mail
+        - unknown
+      x-enum-source: https://www.zerobounce.net/docs/email-validation-api-quickstart/v2-status-codes
+      x-note: >-
+        A closed, provider-published vocabulary that the original schema declares as a bare
+        string. Recorded here rather than injected into the spec.
+
+  - target: $.components.schemas.validateEmailResponse.properties.sub_status
+    update:
+      x-enum-values:
+        - alias_address
+        - leading_period_removed
+        - alternate
+        - gold
+        - role_based_accept_all
+        - accept_all
+        - ai_agent_mailbox
+        - does_not_accept_mail
+        - failed_syntax_check
+        - possible_typo
+        - mailbox_not_found
+        - no_dns_entries
+        - mailbox_quota_exceeded
+        - unroutable_ip_address
+        - role_based
+        - disposable
+        - role_based_catch_all
+        - mx_forward
+        - global_suppression
+        - possible_trap
+        - toxic
+        - antispam_system
+        - exception_occurred
+        - failed_smtp_connection
+        - forcible_disconnect
+        - greylisted
+        - mail_server_did_not_respond
+        - mail_server_temporary_error
+        - timeout_exceeded
+      x-open-enum: true
+      x-note: >-
+        Treat as OPEN. ai_agent_mailbox was added on 2026-07-14 with no version change, so
+        a closed client-side enum will break on the next addition.
+      x-enum-source: https://www.zerobounce.net/docs/email-validation-api-quickstart/v2-status-codes
+
+  - target: $.components.schemas.validateEmailResponse
+    update:
+      x-type-fidelity-warning: >-
+        free_email, mx_found and catchall_domain are semantically boolean and
+        domain_age_days is semantically an integer, but all are declared type string in the
+        provider's schema. Clients must coerce. Deliberately NOT rewritten here — the
+        overlay records our enhancements, and silently retyping a provider's contract would
+        misrepresent what they publish.

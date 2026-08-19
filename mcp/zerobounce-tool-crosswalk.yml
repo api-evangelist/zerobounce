@@ -1,0 +1,252 @@
+generated: '2026-08-13'
+method: derived
+source: >-
+  mcp/zerobounce-mcp.yml (tool definitions read from github.com/zerobounce/zerobounce-mcp
+  src/tools/*.ts) bound against the REST v2 surface in
+  collections/zerobounce-api-v2-official.postman_collection.json
+  (github.com/zerobounce/postman-v2, first-party) and
+  openapi/zerobounce-validation-api-openapi.yml.
+description: >-
+  Binds every ZeroBounce MCP tool to the REST operation that backs it, and records the
+  operations that have no tool. ZeroBounce publishes no OpenAPI for the v2 REST API, so
+  the REST side of this crosswalk is keyed on the METHOD + PATH of the provider's own
+  Postman collection rather than on OpenAPI operationIds — the only first-party
+  machine-readable inventory of v2 that exists. Where an operationId does exist (the
+  ChatGPT-plugin OpenAPI in openapi/) it is named explicitly.
+
+surfaces:
+  openapi:
+    path: openapi/zerobounce-validation-api-openapi.yml
+    host: https://members-api.zerobounce.net
+    operations: 2
+    note: >-
+      This is the ZeroBounce ChatGPT-plugin OpenAPI, not the v2 API. It covers only
+      single and batch validation and is served from a different host. No OpenAPI for
+      api-us/api-eu/bulkapi v2 is published anywhere — see conformance/ for the probe log.
+  rest_v2:
+    source: collections/zerobounce-api-v2-official.postman_collection.json
+    hosts:
+      - https://api-us.zerobounce.net/v2
+      - https://api-eu.zerobounce.net/v2
+      - https://api.zerobounce.net/v2
+      - https://bulkapi.zerobounce.net
+    operations: 32
+    gated: false
+    note: Every REST operation requires an account api_key; the collection itself is public.
+  mcp:
+    package: '@zerobounce/mcp'
+    transport: local-stdio
+    url: null
+    tools: 16
+    gated: true
+    note: >-
+      No hosted MCP endpoint exists, so tools/list cannot be called remotely. Tool schemas
+      here come from the provider's published source, not a live introspection.
+  graphql:
+    present: false
+
+crosswalk:
+  - tool: validate_email
+    category: validation
+    rest:
+      - 'GET /v2/validate'
+    openapi_operation_ids:
+      - validate
+    binding: direct
+    confidence: high
+    note: >-
+      MCP `email`/`ipAddress` map to REST `email`/`ip_address`. The plugin OpenAPI
+      operationId `validate` is the same capability on members-api.zerobounce.net.
+
+  - tool: validate_batch
+    category: validation
+    rest:
+      - 'POST /v2/validatebatch'
+    openapi_operation_ids:
+      - validateBatch
+    binding: direct
+    confidence: high
+    note: >-
+      REST accepts up to 100 email_batch entries per call at 30 req/min (40 on
+      ZeroBounce ONE). The MCP tool does not surface that ceiling.
+
+  - tool: get_credits
+    category: account
+    rest:
+      - 'GET /v2/getcredits'
+    binding: direct
+    confidence: high
+
+  - tool: get_api_usage
+    category: account
+    rest:
+      - 'GET /v2/getapiusage'
+    binding: direct
+    confidence: high
+    note: MCP startDate/endDate map to REST start_date/end_date (YYYY-MM-DD).
+
+  - tool: bulk_validate_send_file
+    category: bulk-validation
+    rest:
+      - 'POST https://bulkapi.zerobounce.net/v2/sendfile'
+    binding: direct
+    confidence: high
+    note: >-
+      MCP passes fileContent as a string and constructs the multipart body; REST takes a
+      file part plus email_address_column, return_url and the optional name/gender/IP
+      column indexes the MCP tool does not expose.
+
+  - tool: bulk_validate_file_status
+    category: bulk-validation
+    rest:
+      - 'GET https://bulkapi.zerobounce.net/v2/filestatus'
+    binding: direct
+    confidence: high
+
+  - tool: bulk_validate_get_file
+    category: bulk-validation
+    rest:
+      - 'GET https://bulkapi.zerobounce.net/v2/getfile'
+    binding: direct
+    confidence: high
+
+  - tool: bulk_validate_delete_file
+    category: bulk-validation
+    rest:
+      - 'GET https://bulkapi.zerobounce.net/v2/deletefile'
+    binding: direct
+    confidence: high
+
+  - tool: bulk_ai_scoring_send_file
+    category: ai-scoring
+    rest:
+      - 'POST https://bulkapi.zerobounce.net/v2/scoring/sendfile'
+    binding: direct
+    confidence: high
+
+  - tool: bulk_ai_scoring_file_status
+    category: ai-scoring
+    rest:
+      - 'GET https://bulkapi.zerobounce.net/v2/scoring/filestatus'
+    binding: direct
+    confidence: high
+
+  - tool: bulk_ai_scoring_get_file
+    category: ai-scoring
+    rest:
+      - 'GET https://bulkapi.zerobounce.net/v2/scoring/getfile'
+    binding: direct
+    confidence: high
+
+  - tool: bulk_ai_scoring_delete_file
+    category: ai-scoring
+    rest:
+      - 'GET https://bulkapi.zerobounce.net/v2/scoring/deletefile'
+    binding: direct
+    confidence: high
+
+  - tool: find_email
+    category: email-finder
+    rest:
+      - 'GET /v2/guessformat'
+    binding: direct
+    confidence: high
+    note: >-
+      MCP firstName/middleName/lastName/domain map to REST first_name/middle_name/
+      last_name/domain. MCP additionally accepts `company`, which the Postman collection
+      does not list as a guessformat parameter — the SDK resolves company to a domain
+      before calling REST.
+
+  - tool: domain_search
+    category: domain-search
+    rest:
+      - 'GET /v2/guessformat'
+    binding: shared-operation
+    confidence: medium
+    note: >-
+      Domain Search and Email Finder are the same REST endpoint (/v2/guessformat) called
+      with different parameter sets — domain/company only, versus domain plus a person
+      name. Two MCP tools, one REST operation. Confidence is medium because ZeroBounce
+      documents them as separate products but publishes no separate endpoint.
+
+  - tool: get_activity_data
+    category: activity
+    rest:
+      - 'GET /v2/activity'
+    binding: direct
+    confidence: high
+
+mcp_only: []
+
+rest_only:
+  - operation: 'GET /v2/scoring'
+    name: 'A.I. Scoring: Single / Real-time'
+    reason: >-
+      Real-time per-email AI scoring exists in REST but the MCP server exposes AI scoring
+      only through bulk CSV file tools — stated explicitly in the provider's README.
+  - operation: 'POST https://bulkapi.zerobounce.net/email-finder/sendfile'
+    name: 'Bulk Email Finder: Send File'
+    reason: Not available via the official Node SDK, so not exposed as an MCP tool.
+  - operation: 'GET https://bulkapi.zerobounce.net/email-finder/filestatus'
+    name: 'Bulk Email Finder: File Status'
+    reason: Not available via the official Node SDK.
+  - operation: 'GET https://bulkapi.zerobounce.net/email-finder/getfile'
+    name: 'Bulk Email Finder: Get File'
+    reason: Not available via the official Node SDK.
+  - operation: 'GET https://bulkapi.zerobounce.net/email-finder/deletefile'
+    name: 'Bulk Email Finder: Delete File'
+    reason: Not available via the official Node SDK.
+  - operation: 'POST https://bulkapi.zerobounce.net/domain-search/sendfile'
+    name: 'Bulk Domain Search: Send File'
+    reason: Not available via the official Node SDK.
+  - operation: 'GET https://bulkapi.zerobounce.net/domain-search/filestatus'
+    name: 'Bulk Domain Search: File Status'
+    reason: Not available via the official Node SDK.
+  - operation: 'GET https://bulkapi.zerobounce.net/domain-search/getfile'
+    name: 'Bulk Domain Search: Get File'
+    reason: Not available via the official Node SDK.
+  - operation: 'GET https://bulkapi.zerobounce.net/domain-search/deletefile'
+    name: 'Bulk Domain Search: Delete File'
+    reason: Not available via the official Node SDK.
+  - operation: 'POST https://bulkapi.zerobounce.net/v2/listevaluator/'
+    name: 'List Evaluator: Send File for Evaluation'
+    reason: Not supported by the Node SDK and not implemented in the MCP server.
+  - operation: 'GET https://bulkapi.zerobounce.net/v2/listevaluator/{file_id}/'
+    name: 'List Evaluator: Get Evaluated File'
+    reason: Not supported by the Node SDK.
+  - operation: 'POST https://bulkapi.zerobounce.net/v2/send-evaluated-file/'
+    name: 'List Evaluator: Send Evaluated File'
+    reason: Not supported by the Node SDK.
+  - operation: 'POST /v2/filters/add'
+    name: Add or modify an allow/block rule
+    reason: Custom filter management is not in the Node SDK, so no MCP tool exists.
+  - operation: 'POST /v2/filters/delete'
+    name: Delete a custom allow/block rule
+    reason: Custom filter management is not in the Node SDK.
+  - operation: 'GET https://bulkapi.zerobounce.net/listS3files'
+    name: List Amazon S3 Files
+    reason: S3 integration operations have no MCP tool.
+  - operation: 'POST https://bulkapi.zerobounce.net/validateS3file'
+    name: Validate Amazon S3 File
+    reason: S3 integration operations have no MCP tool.
+  - operation: 'POST https://bulkapi.zerobounce.net/scoreS3file'
+    name: Score Amazon S3 File
+    reason: S3 integration operations have no MCP tool.
+  - operation: 'POST https://bulkapi.zerobounce.net/exportS3file'
+    name: Export Amazon S3 File
+    reason: S3 integration operations have no MCP tool.
+
+coverage:
+  mcp_tools: 16
+  rest_operations: 32
+  bound_pairs: 16
+  distinct_rest_operations_bound: 14
+  mcp_only: 0
+  rest_only: 18
+  rest_coverage_pct: 44
+  note: >-
+    The MCP server covers the real-time and bulk-file core (44% of published REST
+    operations) and drops the entire List Evaluator, custom-filter, S3 and bulk
+    finder/domain-search surface. Every gap traces to one cause the provider names
+    itself: the MCP server wraps the Node SDK, and the Node SDK does not implement those
+    endpoints. Nothing is MCP-only — the MCP surface is a strict subset of REST.

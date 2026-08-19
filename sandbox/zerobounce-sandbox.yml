@@ -1,0 +1,115 @@
+generated: '2026-08-13'
+method: searched
+source: https://www.zerobounce.net/docs/email-validation-api-quickstart/v2-sandbox-mode
+docs: https://www.zerobounce.net/docs/email-validation-api-quickstart/v2-sandbox-mode
+summary: >-
+  ZeroBounce has no separate test-mode key and no separate sandbox host. Instead it
+  reserves a fixed set of magic @example.com addresses that the LIVE endpoint recognises
+  and answers with a deterministic status/sub_status, consuming ZERO credits. You still
+  send your real production API key. This is the identifier-based sandbox pattern (the
+  same shape as Twilio's +1500555xxxx magic numbers) rather than the key-prefix pattern
+  (Stripe sk_test_).
+model: magic-identifiers
+separate_test_key: false
+separate_test_host: false
+credits_consumed: 0
+requires_live_api_key: true
+note_verbatim: >-
+  "You will still need to use your API KEY with these test email addresses." Test
+  addresses "will not use any of your credits."
+
+test_addresses:
+  - value: valid@example.com
+    expects: status valid
+  - value: invalid@example.com
+    expects: status invalid
+  - value: catch_all@example.com
+    expects: status catch-all
+  - value: spamtrap@example.com
+    expects: status spamtrap
+  - value: abuse@example.com
+    expects: status abuse
+  - value: unknown@example.com
+    expects: status unknown
+  - value: donotmail@example.com
+    expects: status do_not_mail
+  - value: toxic@example.com
+    expects: sub_status toxic
+  - value: disposable@example.com
+    expects: sub_status disposable
+  - value: role_based@example.com
+    expects: sub_status role_based
+  - value: role_based_catch_all@example.com
+    expects: sub_status role_based_catch_all
+  - value: role_based_accept_all@example.com
+    expects: sub_status role_based_accept_all
+  - value: global_suppression@example.com
+    expects: sub_status global_suppression
+  - value: possible_trap@example.com
+    expects: sub_status possible_trap
+  - value: possible_typo@example.com
+    expects: sub_status possible_typo
+  - value: antispam_system@example.com
+    expects: sub_status antispam_system
+  - value: does_not_accept_mail@example.com
+    expects: sub_status does_not_accept_mail
+  - value: exception_occurred@example.com
+    expects: sub_status exception_occurred
+  - value: failed_smtp_connection@example.com
+    expects: sub_status failed_smtp_connection
+  - value: failed_syntax_check@example.com
+    expects: sub_status failed_syntax_check
+  - value: forcible_disconnect@example.com
+    expects: sub_status forcible_disconnect
+  - value: greylisted@example.com
+    expects: sub_status greylisted
+  - value: leading_period_removed@example.com
+    expects: sub_status leading_period_removed
+  - value: mail_server_did_not_respond@example.com
+    expects: sub_status mail_server_did_not_respond
+  - value: mail_server_temporary_error@example.com
+    expects: sub_status mail_server_temporary_error
+  - value: mailbox_quota_exceeded@example.com
+    expects: sub_status mailbox_quota_exceeded
+  - value: mailbox_not_found@example.com
+    expects: sub_status mailbox_not_found
+  - value: no_dns_entries@example.com
+    expects: sub_status no_dns_entries
+  - value: timeout_exceeded@example.com
+    expects: sub_status timeout_exceeded
+  - value: unroutable_ip_address@example.com
+    expects: sub_status unroutable_ip_address
+  - value: free_email@example.com
+    expects: free_email true
+  - value: gold@example.com
+    expects: sub_status gold
+  - value: aiagentmailbox@example.com
+    expects: sub_status ai_agent_mailbox
+
+test_ip:
+  value: 99.110.204.1
+  purpose: >-
+    Passed as the ip_address parameter to exercise GEO-location fields in the validation
+    response.
+
+time_simulation:
+  supported: false
+  note: No test clocks or time-travel fixtures are published.
+
+fixtures:
+  supported: false
+  note: >-
+    No fixture/trigger tooling and no sandbox for the bulk file, AI scoring, Email Finder
+    or List Evaluator surfaces — the magic addresses exercise real-time validation only.
+    Bulk file jobs and their return_url callbacks must be tested against live credits.
+
+free_tools:
+  - name: Free Email Verifier
+    url: https://www.zerobounce.net/free-email-verifier
+    note: Browser-based single-address check, no key required. Not an API sandbox.
+  - name: ChatGPT plugin endpoint
+    url: https://members-api.zerobounce.net/api/validation/chatgpt-single-email-validation/
+    note: >-
+      Accepts up to 3 unauthenticated single validations per day with no API key — the
+      closest thing ZeroBounce has to a keyless trial call. See
+      openapi/zerobounce-validation-api-openapi.yml.

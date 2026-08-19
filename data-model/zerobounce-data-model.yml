@@ -1,0 +1,214 @@
+generated: '2026-08-13'
+method: derived
+source: >-
+  openapi/zerobounce-validation-api-openapi.yml (components.schemas),
+  collections/zerobounce-api-v2-official.postman_collection.json,
+  https://www.zerobounce.net/docs/email-validation-api-quickstart/v2-status-codes,
+  https://www.zerobounce.net/docs/email-validation-api-quickstart/v2-send-file/
+summary: >-
+  ZeroBounce has an unusually shallow object graph for an API of this size: there is no
+  customer-visible persistent resource except the bulk File job. Validation is a pure
+  function — you pass an address, you get a result, nothing is stored under an id you can
+  refer to later. The only entity with a handle is File (file_id), and the only
+  relationship in the whole API is File has_many ValidationResult, materialised as CSV
+  rows rather than as addressable sub-resources. That is why there is no pagination, no
+  expansion and no metadata: there is nothing to page through or annotate.
+id_prefixes: none
+id_format: >-
+  file_id is a UUID-shaped string (e.g. aaaaaaa-zzzz-xxxx-yyyy-5003727fffff). No other
+  entity carries an identifier.
+
+entities:
+  - name: ValidationResult
+    description: >-
+      The result of validating one email address. Returned inline; never stored under an
+      addressable id.
+    identifier: null
+    addressable: false
+    source_schema: validateEmailResponse
+    returned_by:
+      - 'GET /v2/validate'
+      - 'POST /v2/validatebatch'
+      - 'GET bulkapi.zerobounce.net/v2/getfile (as CSV rows)'
+      - 'validate (OpenAPI operationId, members-api plugin)'
+    fields:
+      - name: address
+        type: string
+      - name: status
+        type: string
+        enum_source: errors/zerobounce-error-codes.yml#domain_outcomes.statuses
+      - name: sub_status
+        type: string
+        note: Open-ended in practice — new values ship without a version bump.
+      - name: free_email
+        type: string
+      - name: did_you_mean
+        type: string
+      - name: account
+        type: string
+        note: Local part of the address.
+      - name: domain
+        type: string
+      - name: domain_age_days
+        type: string
+      - name: smtp_provider
+        type: string
+      - name: mx_found
+        type: string
+      - name: mx_record
+        type: string
+      - name: catchall_domain
+        type: string
+      - name: firstname
+        type: string
+      - name: lastname
+        type: string
+      - name: gender
+        type: string
+      - name: country
+        type: string
+      - name: region
+        type: string
+      - name: city
+        type: string
+      - name: zipcode
+        type: string
+      - name: processed_at
+        type: string
+    note: >-
+      Every field is typed `string` in the published schema, including the booleans
+      (free_email, mx_found, catchall_domain) and the numeric domain_age_days. Consumers
+      must coerce. This is a real contract-quality defect, not a capture artifact — it is
+      how ZeroBounce's own OpenAPI declares them.
+
+  - name: File
+    description: >-
+      An asynchronous bulk job. The only entity in the API with a durable, referable
+      identifier.
+    identifier: file_id
+    addressable: true
+    lifecycle:
+      - created_by: 'POST bulkapi.zerobounce.net/v2/sendfile'
+      - polled_by: 'GET bulkapi.zerobounce.net/v2/filestatus'
+      - read_by: 'GET bulkapi.zerobounce.net/v2/getfile'
+      - deleted_by: 'GET bulkapi.zerobounce.net/v2/deletefile'
+      - announced_by: return_url completion callback
+    fields:
+      - name: file_id
+        type: string
+      - name: file_name
+        type: string
+      - name: upload_date
+        type: string
+        format: date-time
+      - name: file_status
+        type: string
+      - name: complete_percentage
+        type: string
+      - name: return_url
+        type: string
+
+  - name: ScoringFile
+    description: >-
+      The AI-scoring sibling of File, on a parallel /v2/scoring/* path family with the
+      same four-verb lifecycle and the same file_id handle shape.
+    identifier: file_id
+    addressable: true
+    lifecycle:
+      - created_by: 'POST bulkapi.zerobounce.net/v2/scoring/sendfile'
+      - polled_by: 'GET bulkapi.zerobounce.net/v2/scoring/filestatus'
+      - read_by: 'GET bulkapi.zerobounce.net/v2/scoring/getfile'
+      - deleted_by: 'GET bulkapi.zerobounce.net/v2/scoring/deletefile'
+
+  - name: Account
+    description: The API key's account. Not fetchable as an object; only two projections exist.
+    identifier: null
+    addressable: false
+    projections:
+      - name: CreditBalance
+        returned_by: 'GET /v2/getcredits'
+        fields:
+          - Credits
+      - name: ApiUsage
+        returned_by: 'GET /v2/getapiusage'
+        fields:
+          - total
+          - status_valid
+          - status_invalid
+          - status_catch_all
+          - status_do_not_mail
+          - status_spamtrap
+          - status_unknown
+          - start_date
+          - end_date
+
+  - name: Filter
+    description: >-
+      A custom allow/block rule attached to the account. Write-only from the API's point
+      of view — add and delete exist, list does not.
+    identifier: null
+    addressable: false
+    written_by:
+      - 'POST /v2/filters/add'
+      - 'POST /v2/filters/delete'
+    note: >-
+      There is no endpoint to enumerate existing filters, so an agent cannot read back the
+      rules it created. Notable governance gap.
+
+  - name: EmailFinderResult
+    description: Guessed/verified address format for a person at a domain or company.
+    identifier: null
+    addressable: false
+    returned_by:
+      - 'GET /v2/guessformat'
+    note: Costs 20 credits per query, the most expensive single call in the API.
+
+  - name: ActivityData
+    description: Recent-activity signal for an address.
+    identifier: null
+    addressable: false
+    returned_by:
+      - 'GET /v2/activity'
+
+relationships:
+  - from: File
+    to: ValidationResult
+    kind: has_many
+    via: file_id
+    materialisation: CSV rows in the getfile response, not addressable sub-resources
+  - from: ScoringFile
+    to: ValidationResult
+    kind: has_many
+    via: file_id
+    materialisation: CSV rows with an AI score column
+  - from: ValidationResult
+    to: Domain
+    kind: belongs_to
+    via: domain
+    note: >-
+      Domain is a denormalised string on the result (domain, domain_age_days, mx_record,
+      catchall_domain), not a first-class resource.
+  - from: Account
+    to: File
+    kind: has_many
+    via: api_key
+    note: >-
+      Implicit only — there is no list-files endpoint, so an agent that loses a file_id
+      cannot recover it from the API.
+  - from: Account
+    to: Filter
+    kind: has_many
+    via: api_key
+    note: Write-only; no list endpoint.
+
+counts:
+  entities: 8
+  addressable_entities: 2
+  relationships: 5
+
+gaps:
+  - No list endpoints for File or Filter — identifiers are unrecoverable once lost.
+  - Every response field is typed string, including booleans and numbers.
+  - No sub_status enum in any published schema, only in prose docs.
+  - No object reference page; the schema above is assembled from the plugin OpenAPI plus
+    the status-codes doc plus the first-party Postman collection.

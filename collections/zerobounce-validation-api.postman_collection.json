@@ -1,0 +1,220 @@
+{
+  "item": [
+    {
+      "id": "33bd3721-a49b-4546-b9e8-fb728cafb651",
+      "name": "Validation",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "fb33d378-8eb6-4e9d-bfd9-28a6fc4c0481",
+          "name": "Validate an email address. Allows a maximum of 3 requests per day for an unauthenticated user. For more requests please register on ZeroBounce.net and get an API key - https://www.zerobounce.net/members/signin/register.",
+          "request": {
+            "name": "Validate an email address. Allows a maximum of 3 requests per day for an unauthenticated user. For more requests please register on ZeroBounce.net and get an API key - https://www.zerobounce.net/members/signin/register.",
+            "description": {},
+            "url": {
+              "path": [
+                "api",
+                "validation",
+                "chatgpt-single-email-validation",
+                ""
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"<string>\",\n  \"api_key\": \"<string>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "e4d26a64-1783-4e5c-a684-200dbf1e9009",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "validation",
+                    "chatgpt-single-email-validation",
+                    ""
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"<string>\",\n  \"api_key\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"address\": \"string\",\n  \"status\": \"string\",\n  \"sub_status\": \"string\",\n  \"free_email\": \"string\",\n  \"did_you_mean\": \"string\",\n  \"account\": \"string\",\n  \"domain\": \"string\",\n  \"domain_age_days\": \"string\",\n  \"smtp_provider\": \"string\",\n  \"mx_found\": \"string\",\n  \"firstname\": \"string\",\n  \"lastname\": \"string\",\n  \"gender\": \"string\",\n  \"country\": \"string\",\n  \"region\": \"string\",\n  \"city\": \"string\",\n  \"zipcode\": \"string\",\n  \"processed_at\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "26a3d830-2ccc-4f82-b0d3-6f326fffe3ab",
+          "name": "Validate a list of email addresses. Requires a ZeroBounce API key. The user can get an API key by registering on ZeroBounce.net - https://www.zerobounce.net/members/signin/register.",
+          "request": {
+            "name": "Validate a list of email addresses. Requires a ZeroBounce API key. The user can get an API key by registering on ZeroBounce.net - https://www.zerobounce.net/members/signin/register.",
+            "description": {},
+            "url": {
+              "path": [
+                "api",
+                "validation",
+                "chatgpt-batch-validation",
+                ""
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"api_key\": \"<string>\",\n  \"emails\": \"<string>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "c19836ef-4b55-4e97-9474-4d6cc48fd415",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "validation",
+                    "chatgpt-batch-validation",
+                    ""
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"api_key\": \"<string>\",\n  \"emails\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[\n  {\n    \"address\": \"string\",\n    \"status\": \"string\",\n    \"sub_status\": \"string\",\n    \"free_email\": \"string\",\n    \"did_you_mean\": \"string\",\n    \"account\": \"string\",\n    \"domain\": \"string\",\n    \"domain_age_days\": \"string\",\n    \"smtp_provider\": \"string\",\n    \"mx_found\": \"string\",\n    \"firstname\": \"string\",\n    \"lastname\": \"string\",\n    \"gender\": \"string\",\n    \"country\": \"string\",\n    \"region\": \"string\",\n    \"city\": \"string\",\n    \"zipcode\": \"string\",\n    \"processed_at\": \"string\"\n  },\n  {\n    \"address\": \"string\",\n    \"status\": \"string\",\n    \"sub_status\": \"string\",\n    \"free_email\": \"string\",\n    \"did_you_mean\": \"string\",\n    \"account\": \"string\",\n    \"domain\": \"string\",\n    \"domain_age_days\": \"string\",\n    \"smtp_provider\": \"string\",\n    \"mx_found\": \"string\",\n    \"firstname\": \"string\",\n    \"lastname\": \"string\",\n    \"gender\": \"string\",\n    \"country\": \"string\",\n    \"region\": \"string\",\n    \"city\": \"string\",\n    \"zipcode\": \"string\",\n    \"processed_at\": \"string\"\n  }\n]",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://members-api.zerobounce.net",
+      "key": "baseUrl"
+    }
+  ],
+  "info": {
+    "_postman_id": "0f518c4d-2532-40ac-af4c-9c3e9065cd1c",
+    "name": "ZeroBounce Validate Email plugin Validation API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Plugin that can validate email addresses. Send the email address you want to validate and the ZeroBounce API will validate that email and return information on it.",
+      "type": "text/plain"
+    }
+  }
+}

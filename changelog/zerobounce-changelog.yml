@@ -1,0 +1,104 @@
+generated: '2026-08-13'
+method: searched
+source: https://www.zerobounce.net/updates
+url: https://www.zerobounce.net/updates
+summary: >-
+  ZeroBounce publishes a dated product-updates feed at /updates covering the whole
+  platform — integrations, billing, account security and API behaviour mixed together.
+  There is no API-only changelog, no per-release version numbering and no
+  breaking-vs-additive labelling, so a consumer cannot tell from the feed whether an
+  entry changes a response payload. Entries are dated to the month, not the day.
+scheme: dated product updates, monthly granularity, no version numbers
+current_version: v2
+api_specific_feed: false
+breaking_change_labels: false
+rss: not published
+
+entries:
+  - date: '2026-07-14'
+    title: New ai_agent_mailbox sub-status
+    type: additive
+    breaking: false
+    api_affecting: true
+    highlights: >-
+      A new `sub_status` value, ai_agent_mailbox, now appears on validation results with
+      status `valid` and `catch-all`, marking a mailbox controlled or managed by an AI
+      agent rather than actively monitored by a person. Clients with a closed enum over
+      sub_status must tolerate it. A matching sandbox address (aiagentmailbox@example.com)
+      exists.
+  - date: '2025-10'
+    title: Updated Dynamics 365 integration
+    type: integration
+    breaking: false
+    api_affecting: false
+    highlights: Improved setup flow using security roles.
+  - date: '2025-10'
+    title: Security updates
+    type: platform
+    breaking: false
+    api_affecting: false
+    highlights: Okta Passkey implementation; SMS two-factor deprecated.
+  - date: '2025-10'
+    title: Additional payment methods for subscriptions
+    type: billing
+    breaking: false
+    api_affecting: false
+    highlights: Alternative billing options to prevent service interruption.
+  - date: '2025-10'
+    title: Customer.io integration now available
+    type: integration
+    breaking: false
+    api_affecting: false
+    highlights: Real-time email validation and activity data syncing into Customer.io.
+  - date: '2025-09'
+    title: Adobe Journey Optimizer integration now available
+    type: integration
+    breaking: false
+    api_affecting: false
+    highlights: Automated list cleaning inside Adobe accounts.
+  - date: '2025-09'
+    title: Catch-all email validation now available
+    type: additive
+    breaking: false
+    api_affecting: true
+    highlights: >-
+      Verify+ converts catch-all results into definitive ones. Surfaces on the API as the
+      allow_phase_2 parameter on bulk sendfile.
+  - date: '2025-09'
+    title: Automated alerts for high credit usage
+    type: platform
+    breaking: false
+    api_affecting: false
+    highlights: Customizable credit-usage notifications per team member.
+  - date: '2025-09'
+    title: Inbox placement testing with over 100 seeds
+    type: product
+    breaking: false
+    api_affecting: false
+    highlights: Customizable seed distribution and test type selection.
+  - date: '2025-07'
+    title: New geolocation API — region-specific endpoints
+    type: additive
+    breaking: false
+    api_affecting: true
+    effective: '2025-10-01'
+    highlights: >-
+      Introduced api-us.zerobounce.net (US only) and api-eu.zerobounce.net (EU only),
+      routing requests through the fastest servers. This is also the change that demoted
+      api.zerobounce.net to a legacy EU-only endpoint — announced as a feature addition
+      rather than as a deprecation. See lifecycle/zerobounce-lifecycle.yml.
+  - date: '2025-06'
+    title: Google One Tap login
+    type: platform
+    breaking: false
+    api_affecting: false
+    highlights: Passwordless account access.
+
+gaps:
+  - No day-level dates; entries are grouped by month.
+  - No API-only view and no tag distinguishing API changes from marketing/product news.
+  - No breaking/additive labelling and no version identifiers.
+  - No RSS/Atom or JSON feed, so the changelog cannot be watched programmatically.
+  - >-
+    SDK releases are not represented at all — the JS/Python/PHP/.NET SDKs shipped
+    mid-2026 releases that appear nowhere in this feed.

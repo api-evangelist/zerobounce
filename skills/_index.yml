@@ -1,0 +1,51 @@
+generated: '2026-08-13'
+method: generated
+source: >-
+  openapi/zerobounce-validation-api-openapi.yml,
+  collections/zerobounce-api-v2-official.postman_collection.json,
+  and the ZeroBounce docs pages cited in each skill
+description: >-
+  Packaged Agent Skills for the ZeroBounce v2 API. Each skill is grounded in operations
+  that genuinely exist — the two operationIds in the captured OpenAPI plus the method+path
+  operations in ZeroBounce's own first-party Postman collection — and carries the
+  conventions, error semantics, credit costs and retry hazards from the artifacts in this
+  repo. No operation, parameter or field below was invented.
+api: zerobounce:email-validation-api
+skill_count: 3
+skills:
+  - name: zerobounce-validate-single-email
+    file: zerobounce-validate-single-email.md
+    summary: >-
+      Validate one address and branch correctly on status/sub_status, which HTTP 200 does
+      not tell you. Includes the zero-credit sandbox addresses.
+    operations:
+      - validate
+      - 'GET /v2/validate'
+      - 'GET /v2/getcredits'
+  - name: zerobounce-bulk-validate-file
+    file: zerobounce-bulk-validate-file.md
+    summary: >-
+      Full bulk file lifecycle on bulkapi.zerobounce.net — upload, track file_id, handle
+      the unsigned completion callback, pull CSV results, delete. Covers the unbounded
+      cost of a blind retry.
+    operations:
+      - 'POST https://bulkapi.zerobounce.net/v2/sendfile'
+      - 'GET https://bulkapi.zerobounce.net/v2/filestatus'
+      - 'GET https://bulkapi.zerobounce.net/v2/getfile'
+      - 'GET https://bulkapi.zerobounce.net/v2/deletefile'
+  - name: zerobounce-find-and-verify-contact
+    file: zerobounce-find-and-verify-contact.md
+    summary: >-
+      Email Finder plus verification plus activity check, and the fact that Email Finder
+      and Domain Search are one endpoint. 21 credits per usable contact.
+    operations:
+      - 'GET /v2/guessformat'
+      - 'GET /v2/validate'
+      - 'GET /v2/activity'
+      - 'GET /v2/getcredits'
+provider_published_skills: none found
+provider_agents_md: none found
+note: >-
+  Searched the ZeroBounce GitHub org and docs for a provider-published skills/ directory
+  or AGENTS.md; none exists. These are API Evangelist generations, marked method:
+  generated, and would be superseded by anything ZeroBounce publishes itself.

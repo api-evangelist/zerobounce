@@ -1,0 +1,344 @@
+generated: '2026-08-13'
+method: searched
+source: https://github.com/zerobounce/zerobounce-mcp
+status: official
+name: ZeroBounce MCP Server
+description: >-
+  Official ZeroBounce Model Context Protocol server. Exposes ZeroBounce email
+  validation, AI scoring, email finder, domain search, activity data, credit and
+  bulk-file operations as MCP tools for AI coding assistants and MCP clients
+  (Cursor, VS Code, Claude Desktop, Continue, Zed). Published by ZeroBounce under
+  Apache-2.0; wraps the official @zerobounce/zero-bounce-sdk Node SDK.
+
+deployment:
+  mode: local-stdio
+  install: npm install -g @zerobounce/mcp
+  package: https://www.npmjs.com/package/@zerobounce/mcp
+  auth: api-key
+  verified: searched
+  note: >-
+    ZeroBounce ships NO hosted/remote MCP endpoint. The server is distributed only as an
+    npm package that installs a local `zerobounce-mcp` stdio binary a human must install
+    and configure on a machine before any agent can reach it. Establishing this required
+    reading the provider's own README and package.json — the package `bin` maps
+    `zerobounce-mcp` to `dist/index.js` and every documented client config uses
+    `"command": "zerobounce-mcp"`, i.e. stdio transport. No https MCP URL is published
+    anywhere in the repo, the docs, or llms.txt, and none was probed or guessed.
+
+client_config:
+  format: json
+  verbatim_from_provider_readme: true
+  example: |
+    {
+      "mcpServers": {
+        "zerobounce": {
+          "command": "zerobounce-mcp",
+          "args": ["--api-key=YOUR_API_KEY"]
+        }
+      }
+    }
+  clients_documented:
+    - name: Cursor
+      docs: https://github.com/zerobounce/zerobounce-mcp/blob/main/docs/configuration-cursor.md
+    - name: VS Code
+      docs: https://github.com/zerobounce/zerobounce-mcp/blob/main/docs/configuration-vscode.md
+    - name: Claude Desktop / Continue / Zed (generic)
+      docs: https://github.com/zerobounce/zerobounce-mcp/blob/main/docs/configuration-other.md
+
+package:
+  name: '@zerobounce/mcp'
+  registry: npm
+  version: 0.1.8
+  published: '2026-06-17'
+  license: Apache-2.0
+  repository: https://github.com/zerobounce/zerobounce-mcp
+  runtime: node >=18
+  depends_on:
+    - '@modelcontextprotocol/sdk ^1.29.0'
+    - '@zerobounce/zero-bounce-sdk ^2.1.9'
+
+authentication:
+  scheme: api-key
+  passed_as: CLI argument --api-key=<key> (ZeroBounce account API key)
+  obtained_from: https://www.zerobounce.net/members/createaccount
+  note: >-
+    The MCP server inherits the same single-credential api_key model as the REST v2 API.
+    There are no scopes and no OAuth; the key carries full account authority, so an agent
+    given this key can spend account credits.
+
+tools_source: >-
+  Tool names, descriptions and inputSchemas below were read verbatim from the provider's
+  own TypeScript source at src/tools/*.ts in github.com/zerobounce/zerobounce-mcp (main).
+  A live tools/list was NOT possible: the server is stdio-only, so there is no HTTPS
+  endpoint to POST a JSON-RPC tools/list to without installing and running it locally.
+tool_count: 16
+
+tools:
+  - name: validate_email
+    category: validation
+    description: >-
+      Validate a single email address using ZeroBounce API. Returns detailed validation
+      results including status, sub-status, and additional metadata.
+    inputSchema:
+      type: object
+      properties:
+        email:
+          type: string
+          description: The email address to validate
+        ipAddress:
+          type: string
+          description: Optional IP address of the user (helps improve accuracy)
+      required:
+        - email
+
+  - name: validate_batch
+    category: validation
+    description: >-
+      Validate multiple email addresses in batch. More efficient for validating multiple
+      emails at once.
+    inputSchema:
+      type: object
+      properties:
+        emails:
+          type: array
+          items:
+            type: string
+          description: Array of email addresses to validate
+        emailAddressColumn:
+          type: number
+          description: 'Optional column index if emails are in CSV format (default: 0)'
+      required:
+        - emails
+
+  - name: get_credits
+    category: account
+    description: Get the number of credits remaining in your ZeroBounce account.
+    inputSchema:
+      type: object
+      properties: {}
+
+  - name: get_api_usage
+    category: account
+    description: >-
+      Get API usage statistics for a date range. Shows validation counts by status and
+      sub-status.
+    inputSchema:
+      type: object
+      properties:
+        startDate:
+          type: string
+          description: Start date in YYYY-MM-DD format
+        endDate:
+          type: string
+          description: End date in YYYY-MM-DD format
+      required:
+        - startDate
+        - endDate
+
+  - name: bulk_validate_send_file
+    category: bulk-validation
+    description: Send a CSV file for bulk email validation. Returns a file ID for tracking.
+    inputSchema:
+      type: object
+      properties:
+        fileContent:
+          type: string
+          description: CSV file content as a string
+        fileName:
+          type: string
+          description: Name of the file
+        returnUrl:
+          type: string
+          description: Optional callback URL to be notified when processing is complete
+        emailAddressColumn:
+          type: number
+          description: >-
+            Column index (0-based) containing email addresses. Defaults to 0 (first column).
+      required:
+        - fileContent
+        - fileName
+
+  - name: bulk_validate_file_status
+    category: bulk-validation
+    description: Get the status of a bulk validation file upload.
+    inputSchema:
+      type: object
+      properties:
+        fileId:
+          type: string
+          description: File ID returned by bulk_validate_send_file
+      required:
+        - fileId
+
+  - name: bulk_validate_get_file
+    category: bulk-validation
+    description: Get the results of a completed bulk validation file.
+    inputSchema:
+      type: object
+      properties:
+        fileId:
+          type: string
+          description: File ID returned by bulk_validate_send_file
+      required:
+        - fileId
+
+  - name: bulk_validate_delete_file
+    category: bulk-validation
+    description: Delete a bulk validation file from your account.
+    inputSchema:
+      type: object
+      properties:
+        fileId:
+          type: string
+          description: File ID returned by bulk_validate_send_file
+      required:
+        - fileId
+
+  - name: bulk_ai_scoring_send_file
+    category: ai-scoring
+    description: Send a CSV file for bulk AI email scoring. Returns a file ID for tracking.
+    inputSchema:
+      type: object
+      properties:
+        fileContent:
+          type: string
+          description: CSV file content as a string
+        fileName:
+          type: string
+          description: Name of the file
+        returnUrl:
+          type: string
+          description: Optional callback URL to be notified when processing is complete
+        emailAddressColumn:
+          type: number
+          description: >-
+            Column index (0-based) containing email addresses. Defaults to 0 (first column).
+      required:
+        - fileContent
+        - fileName
+
+  - name: bulk_ai_scoring_file_status
+    category: ai-scoring
+    description: Get the status of a bulk AI scoring file upload.
+    inputSchema:
+      type: object
+      properties:
+        fileId:
+          type: string
+          description: File ID returned by bulk_ai_scoring_send_file
+      required:
+        - fileId
+
+  - name: bulk_ai_scoring_get_file
+    category: ai-scoring
+    description: Get the results of a completed bulk AI scoring file.
+    inputSchema:
+      type: object
+      properties:
+        fileId:
+          type: string
+          description: File ID returned by bulk_ai_scoring_send_file
+      required:
+        - fileId
+
+  - name: bulk_ai_scoring_delete_file
+    category: ai-scoring
+    description: Delete a bulk AI scoring file from your account.
+    inputSchema:
+      type: object
+      properties:
+        fileId:
+          type: string
+          description: File ID returned by bulk_ai_scoring_send_file
+      required:
+        - fileId
+
+  - name: find_email
+    category: email-finder
+    description: Find an email address by person name and domain or company name.
+    inputSchema:
+      type: object
+      properties:
+        domain:
+          type: string
+          description: Domain to search for email addresses
+        firstName:
+          type: string
+          description: First name of the person (required)
+        middleName:
+          type: string
+          description: Middle name of the person
+        lastName:
+          type: string
+          description: Last name of the person
+        company:
+          type: string
+          description: Company name
+      required:
+        - firstName
+    note: >-
+      Handler additionally enforces that at least one of `domain` or `company` is present,
+      a constraint the inputSchema does not express.
+
+  - name: domain_search
+    category: domain-search
+    description: >-
+      Get the likely email address format for a domain or company (Domain Search API).
+    inputSchema:
+      type: object
+      properties:
+        domain:
+          type: string
+          description: Domain to look up (e.g. example.com)
+        company:
+          type: string
+          description: Company name to look up (alternative to domain)
+      required: []
+    note: >-
+      Handler enforces that at least one of `domain` or `company` is present; the schema
+      declares no required fields.
+
+  - name: get_activity_data
+    category: activity
+    description: Get activity data for an email address to see if it has been active recently.
+    inputSchema:
+      type: object
+      properties:
+        email:
+          type: string
+          description: Email address to get activity data for
+      required:
+        - email
+
+resources:
+  - uri: 'zerobounce://config'
+    description: Current ZeroBounce API configuration (base URL and whether an API key is configured).
+
+not_exposed:
+  - capability: Bulk Email Finder file operations
+    reason: Not available via the official Node SDK, per the provider's README.
+  - capability: Bulk Domain Search file operations
+    reason: Not available via the official Node SDK, per the provider's README.
+  - capability: Custom filters (allow/block rule management)
+    reason: Not available via the official Node SDK, per the provider's README.
+  - capability: List Evaluator
+    reason: Not supported by the Node SDK and not implemented in the MCP server.
+  - capability: Single/real-time AI scoring
+    reason: AI scoring is bulk-CSV only in this server; the REST /v2/scoring endpoint exists.
+  - capability: Amazon S3 file operations (listS3files, validateS3file, scoreS3file, exportS3file)
+    reason: Present in the official Postman collection; no MCP tool exists.
+  - capability: Greylist / WHOIS processing endpoints
+    reason: Documented REST surface with no corresponding MCP tool.
+
+error_handling:
+  envelope_documented_in_readme:
+    error: Error type
+    message: Detailed error description
+    details: Additional context (if available)
+  common_errors:
+    - Missing API key — add --api-key argument
+    - Invalid API key — verify in the ZeroBounce dashboard
+    - Rate limiting — wait and retry, or upgrade plan
+    - Insufficient credits — add credits to the account
+    - Invalid date format — use YYYY-MM-DD
+    - File not found — verify the file ID from the upload response

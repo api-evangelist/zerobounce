@@ -1,0 +1,153 @@
+generated: '2026-08-13'
+method: probed
+source: live HTTPS probes of every apis.yml baseURL host, every OpenAPI servers[] host, and the docs host
+result: none
+note: >-
+  ZeroBounce serves NO /.well-known/ documents. Every path on every host either 404s
+  (www, bulkapi, members-api — all returning the marketing/API SPA HTML shell, not a
+  document) or is refused with a Cloudflare 403 (api, api-us, api-eu, which block
+  non-browser traffic on any path outside /v2/*). docs.zerobounce.net answers 200 for
+  every /.well-known/* path but the body is a Cloudflare "301 Moved Permanently" HTML
+  page, i.e. an SPA/redirect catch-all, NOT a document — recorded as a miss, not a hit.
+  Because no path returned a real document, NO WellKnown and NO SecurityTxt pointer is
+  emitted in apis.yml. This is a recorded absence, not a presence.
+  ZeroBounce does publish a vulnerability-disclosure page at
+  https://www.zerobounce.net/security (see security/zerobounce-vulnerability-disclosure.yml)
+  — they simply do not mirror it at /.well-known/security.txt (RFC 9116).
+hosts:
+  - host: www.zerobounce.net
+    paths:
+      - path: /.well-known/security.txt
+        status: 404
+        file: null
+      - path: /.well-known/openid-configuration
+        status: 404
+        file: null
+      - path: /.well-known/oauth-authorization-server
+        status: 404
+        file: null
+      - path: /.well-known/oauth-protected-resource
+        status: 404
+        file: null
+      - path: /.well-known/api-catalog
+        status: 404
+        file: null
+      - path: /.well-known/ai-plugin.json
+        status: 404
+        file: null
+      - path: /.well-known/agent-card.json
+        status: 404
+        file: null
+      - path: /.well-known/agent.json
+        status: 404
+        file: null
+  - host: api.zerobounce.net
+    note: Cloudflare refuses every path outside /v2/* with 403 text/html.
+    paths:
+      - path: /.well-known/security.txt
+        status: 403
+        file: null
+      - path: /.well-known/openid-configuration
+        status: 403
+        file: null
+      - path: /.well-known/oauth-authorization-server
+        status: 403
+        file: null
+      - path: /.well-known/oauth-protected-resource
+        status: 403
+        file: null
+      - path: /.well-known/api-catalog
+        status: 403
+        file: null
+      - path: /.well-known/ai-plugin.json
+        status: 403
+        file: null
+      - path: /.well-known/agent-card.json
+        status: 403
+        file: null
+      - path: /.well-known/agent.json
+        status: 403
+        file: null
+  - host: api-us.zerobounce.net
+    note: US data-residency endpoint; same Cloudflare 403 posture as api.zerobounce.net.
+    paths:
+      - path: /.well-known/security.txt
+        status: 403
+        file: null
+      - path: /.well-known/api-catalog
+        status: 403
+        file: null
+      - path: /.well-known/agent-card.json
+        status: 403
+        file: null
+      - path: /.well-known/agent.json
+        status: 403
+        file: null
+  - host: api-eu.zerobounce.net
+    paths:
+      - path: /.well-known/security.txt
+        status: 403
+        file: null
+      - path: /.well-known/api-catalog
+        status: 403
+        file: null
+      - path: /.well-known/agent-card.json
+        status: 403
+        file: null
+      - path: /.well-known/agent.json
+        status: 403
+        file: null
+  - host: bulkapi.zerobounce.net
+    paths:
+      - path: /.well-known/security.txt
+        status: 404
+        file: null
+      - path: /.well-known/api-catalog
+        status: 404
+        file: null
+      - path: /.well-known/agent-card.json
+        status: 404
+        file: null
+      - path: /.well-known/agent.json
+        status: 404
+        file: null
+  - host: members-api.zerobounce.net
+    note: Host named in the servers[] block of openapi/zerobounce-validation-api-openapi.yml.
+    paths:
+      - path: /.well-known/security.txt
+        status: 404
+        file: null
+      - path: /.well-known/api-catalog
+        status: 404
+        file: null
+      - path: /.well-known/agent-card.json
+        status: 404
+        file: null
+      - path: /.well-known/agent.json
+        status: 404
+        file: null
+  - host: docs.zerobounce.net
+    note: >-
+      Answers 200 on every /.well-known/* path, but the body is a Cloudflare 301 HTML
+      page. Classic catch-all false positive — treated as a miss.
+    paths:
+      - path: /.well-known/security.txt
+        status: 200
+        content_type: text/html
+        document: false
+        file: null
+      - path: /.well-known/agent-card.json
+        status: 200
+        content_type: text/html
+        document: false
+        file: null
+      - path: /.well-known/agent.json
+        status: 200
+        content_type: text/html
+        document: false
+        file: null
+a2a:
+  agent_card_found: false
+  note: >-
+    No A2A Agent Card on any host. Nothing is written to a2a/ — per the pipeline an agent
+    card is search-only and must never be authored on the provider's behalf.

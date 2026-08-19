@@ -1,0 +1,122 @@
+generated: '2026-08-13'
+method: searched
+source: >-
+  https://www.zerobounce.net/docs/email-validation-api-quickstart/v2-send-file/ and
+  https://www.zerobounce.net/docs/email-validation-api-quickstart/greylist-api-processing
+docs: https://www.zerobounce.net/docs/email-validation-api-quickstart/v2-file-management-api
+asyncapi_spec_published: false
+asyncapi_note: >-
+  ZeroBounce publishes NO AsyncAPI document. Probed every host for /asyncapi.yaml,
+  /asyncapi.json and an event catalog; nothing served. What exists is a real but small
+  callback surface — two caller-registered completion callbacks — captured here as a
+  webhook catalog rather than fabricated as an AsyncAPI spec.
+summary: >-
+  ZeroBounce has no event bus, no subscription management and no event catalog. It has
+  two fire-and-forget completion callbacks, both registered per-request as a URL
+  parameter on the call that starts the work, both delivered once when a long-running job
+  finishes. There is no signature, no shared secret, no retry policy and no replay — and
+  the provider states plainly that duplicate requests produce duplicate callbacks, each
+  of which is charged.
+model: per-request callback URL
+subscription_management: none
+signing: none
+signature_header: null
+replay: none
+delivery_guarantee: at-most-once, no documented retry
+
+webhooks:
+  - id: bulk_validation_complete
+    name: Bulk validation file complete
+    registered_on: 'POST https://bulkapi.zerobounce.net/v2/sendfile'
+    parameter: return_url
+    required: false
+    method: POST
+    content_type: application/json
+    description: >-
+      POSTed to the caller's return_url when a bulk email-validation file finishes
+      processing. Carries only the job handle — results must then be pulled with
+      GET /v2/getfile?file_id=...
+    payload_example_verbatim: |
+      {
+        "file_id": "aaaaaaa-zzzz-xxxx-yyyy-5003727fffff",
+        "file_name": "Your file name.csv",
+        "upload_date": "2023-04-28T15:25:41Z"
+      }
+    payload_fields:
+      - name: file_id
+        type: string
+        format: uuid-like
+        description: Job handle returned by sendfile; use it against filestatus/getfile.
+      - name: file_name
+        type: string
+        description: Original uploaded file name.
+      - name: upload_date
+        type: string
+        format: date-time
+        description: ISO 8601 UTC timestamp of the original upload.
+    follow_up:
+      - 'GET https://bulkapi.zerobounce.net/v2/getfile?api_key=...&file_id=...'
+
+  - id: bulk_ai_scoring_complete
+    name: Bulk AI scoring file complete
+    registered_on: 'POST https://bulkapi.zerobounce.net/v2/scoring/sendfile'
+    parameter: return_url
+    required: false
+    method: POST
+    content_type: application/json
+    description: >-
+      Same completion callback shape as bulk validation, for the AI scoring file pipeline.
+      The MCP server exposes this as the `returnUrl` argument on
+      bulk_ai_scoring_send_file.
+    payload_fields:
+      - name: file_id
+        type: string
+      - name: file_name
+        type: string
+      - name: upload_date
+        type: string
+        format: date-time
+    payload_confidence: >-
+      medium — the scoring pipeline mirrors the validation pipeline and the MCP tool
+      exposes the identical returnUrl argument, but ZeroBounce publishes the verbatim
+      payload example only on the validation sendfile page.
+    follow_up:
+      - 'GET https://bulkapi.zerobounce.net/v2/scoring/getfile?api_key=...&file_id=...'
+
+  - id: greylist_processing_complete
+    name: Greylist re-validation complete
+    registered_on: 'GET /v2/validate (with greylist_processing=true)'
+    parameter: callback_url
+    required: false
+    method: not documented
+    description: >-
+      When a greylisted address is re-validated asynchronously, ZeroBounce sends an HTTP
+      request to callback_url with the result. ZeroBounce treats the callback as delivered
+      when the receiver answers 200 or 201.
+    success_criteria: Receiver must return HTTP 200 or 201.
+    payload_fields: not documented
+    payload_note: >-
+      The greylist page does not publish the callback payload shape or an example — an
+      integrator cannot write the receiver from the docs alone.
+    billing_note_verbatim: >-
+      "duplicate requests are allowed. If you make the same request twice, you can expect
+      two callbacks. Each callback will be charged."
+
+receiver_requirements:
+  - Publicly reachable HTTPS URL.
+  - Return 200 or 201 (greylist callback explicitly; the file callbacks do not publish a
+    success criterion).
+  - >-
+    Deduplicate on file_id yourself. ZeroBounce documents duplicate delivery as expected
+    behaviour and charges for it.
+  - >-
+    Do not trust the callback body as authenticated. There is no signature, so treat it
+    strictly as a hint to go pull the result with your own API key.
+
+gaps:
+  - No AsyncAPI, no event catalog, no channel documentation.
+  - No webhook signing or verification mechanism of any kind.
+  - No retry, backoff or dead-letter policy published.
+  - No webhook management endpoints — URLs are per-request only, so there is nothing to
+    list, rotate or disable after the fact.
+  - Greylist callback payload undocumented.

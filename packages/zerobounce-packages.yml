@@ -1,0 +1,204 @@
+generated: '2026-08-13'
+method: searched
+source: >-
+  npm registry.npmjs.org, pypi.org, repo.packagist.org, api.nuget.org,
+  search.maven.org, proxy.golang.org, github.com/zerobounce
+note: >-
+  ZeroBounce publishes first-party SDKs from the github.com/zerobounce org across
+  JavaScript/Node, Python, PHP, .NET, Java, Android/Kotlin, Swift/iOS and Go, plus an
+  official MCP server on npm. Several community wrappers exist on crates.io, RubyGems
+  and Packagist under third-party accounts; those are recorded with official: false.
+  Source-only wrappers in the org (C, C++, Pascal/Delphi, Rust) ship no registry package
+  and are recorded with registry: github and version read from the repo, or null.
+packages:
+  - language: javascript
+    name: '@zerobounce/zero-bounce-sdk'
+    registry: npm
+    url: https://www.npmjs.com/package/@zerobounce/zero-bounce-sdk
+    repository: https://github.com/zerobounce/zero-bounce-javascript
+    official: true
+    version: 2.1.10
+    published: '2026-07-27'
+
+  - language: javascript
+    name: '@zerobounce/mcp'
+    registry: npm
+    url: https://www.npmjs.com/package/@zerobounce/mcp
+    repository: https://github.com/zerobounce/zerobounce-mcp
+    official: true
+    version: 0.1.8
+    published: '2026-06-17'
+    note: >-
+      Official ZeroBounce MCP server, distributed as a local stdio binary
+      (`zerobounce-mcp`). Wraps @zerobounce/zero-bounce-sdk. See mcp/zerobounce-mcp.yml.
+
+  - language: python
+    name: zerobouncesdk
+    registry: pypi
+    url: https://pypi.org/project/zerobouncesdk/
+    repository: https://github.com/zerobounce/zero-bounce-python-sdk-setup
+    official: true
+    version: 2.2.3
+    published: '2026-06-17'
+
+  - language: php
+    name: zero-bounce/sdk
+    registry: packagist
+    url: https://packagist.org/packages/zero-bounce/sdk
+    repository: https://github.com/zerobounce/zero-bounce-php-sdk-setup
+    official: true
+    version: 2.1.10
+    published: '2026-06-17'
+
+  - language: csharp
+    name: ZeroBounce.SDK
+    registry: nuget
+    url: https://www.nuget.org/packages/ZeroBounce.SDK
+    repository: https://github.com/zerobounce/zero-bounce-csharp-sdk-setup
+    official: true
+    version: 2.1.5
+    published: '2026-06-17'
+    note: Published by the ZeroBounceIntegrations NuGet account, projectUrl https://www.zerobounce.net/.
+
+  - language: java
+    name: com.zerobounce.java:zerobouncesdk
+    registry: maven
+    url: https://central.sonatype.com/artifact/com.zerobounce.java/zerobouncesdk
+    repository: https://github.com/zerobounce/zero-bounce-java-sdk-setup
+    official: true
+    version: 1.2.0
+    published: '2025-01-13'
+    note: >-
+      Last Maven Central release predates the 2026 v2 API additions (ai_agent_mailbox
+      sub-status, region-split endpoints) that the JS/Python/PHP SDKs shipped in 2026 —
+      the Java SDK repo itself was pushed 2026-08-03 but no new artifact was published.
+
+  - language: kotlin
+    name: com.zerobounce.android:zerobouncesdk
+    registry: maven
+    url: https://central.sonatype.com/artifact/com.zerobounce.android/zerobouncesdk
+    repository: https://github.com/zerobounce/zero-bounce-android-sdk-setup
+    official: true
+    version: 1.1.6
+    published: '2023-08-24'
+    note: >-
+      Android SDK artifact is nearly three years stale on Maven Central even though the
+      setup repo was pushed 2026-08-03. Strongest abandonment signal in this set.
+
+  - language: go
+    name: github.com/zerobounce/zerobouncego
+    registry: go
+    url: https://pkg.go.dev/github.com/zerobounce/zerobouncego
+    repository: https://github.com/zerobounce/zerobouncego
+    official: true
+    version: v1.3.0
+    published: '2026-01-26'
+
+  - language: swift
+    name: ZeroBounceSDK
+    registry: github
+    url: https://github.com/zerobounce/zero-bounce-ios-sdk
+    repository: https://github.com/zerobounce/zero-bounce-ios-sdk
+    official: true
+    version: v2.1.3
+    published: null
+    note: >-
+      iOS SDK is distributed from the GitHub repo (Swift Package Manager) rather than a
+      registry with a metadata endpoint; latest git tag is v2.1.3. No CocoaPods trunk
+      entry answered (cocoapods.org/pods/ZeroBounceSDK did not resolve), so no
+      registry-published date is available — checked, nothing to record.
+
+  - language: c
+    name: zerobounce-c-api-wrapper
+    registry: github
+    url: https://github.com/zerobounce/zerobounce-c-api-wrapper
+    official: true
+    version: null
+    published: null
+    note: Source-only wrapper in the ZeroBounce GitHub org; no tags and no package registry entry.
+
+  - language: cpp
+    name: zerobounce-cpp-api-wrapper
+    registry: github
+    url: https://github.com/zerobounce/zerobounce-cpp-api-wrapper
+    official: true
+    version: null
+    published: null
+    note: Source-only wrapper in the ZeroBounce GitHub org; no tags and no package registry entry.
+
+  - language: pascal
+    name: zerobounce-delphi-api-v2
+    registry: github
+    url: https://github.com/zerobounce/zerobounce-delphi-api-v2
+    official: true
+    version: null
+    published: null
+    note: Source-only Delphi/Pascal wrapper; no registry distribution.
+
+  - language: rust
+    name: zerobounce-rust-api
+    registry: github
+    url: https://github.com/zerobounce/zerobounce-rust-api
+    official: true
+    version: null
+    published: null
+    note: >-
+      First-party Rust wrapper source lives in the ZeroBounce org but is not published to
+      crates.io. The crates.io crate named `zerobounce` is a third-party build (see below).
+
+  - language: rust
+    name: zerobounce
+    registry: crates.io
+    url: https://crates.io/crates/zerobounce
+    repository: https://github.com/twisted1919/zerobounce-rust
+    official: false
+    version: 1.0.0
+    published: '2022-08-15'
+    note: Community crate, not published by ZeroBounce.
+
+  - language: ruby
+    name: zerobounce
+    registry: rubygems
+    url: https://rubygems.org/gems/zerobounce
+    repository: https://github.com/afrase/zerobounce
+    official: false
+    version: 0.3.1
+    published: '2023-04-24'
+    note: >-
+      Community gem. ZeroBounce's own org has a zero-bounce-ruby repo but publishes no gem,
+      so Ruby has no first-party registry distribution.
+
+  - language: javascript
+    name: n8n-nodes-zerobounce
+    registry: npm
+    url: https://www.npmjs.com/package/n8n-nodes-zerobounce
+    repository: https://github.com/KalnuErelis/n8n-nodes-zerobounce
+    official: false
+    version: 0.2.1
+    published: '2025-11-10'
+    note: >-
+      n8n community node. A fork also sits in the ZeroBounce GitHub org
+      (zerobounce/n8n-nodes-zerobounce) but the published npm package is the
+      third-party original.
+summary:
+  total: 17
+  official: 13
+  registries:
+    - npm
+    - pypi
+    - packagist
+    - nuget
+    - maven
+    - go
+    - crates.io
+    - rubygems
+    - github
+  currency_findings:
+    - >-
+      JS, Python, PHP and .NET SDKs all shipped in mid-2026 and track the current v2 API.
+    - >-
+      Java (2025-01-13) and Android (2023-08-24) Maven artifacts lag the API by a year or
+      more despite active repo pushes in August 2026 — releases are not being cut.
+    - >-
+      Ruby and Rust have first-party source repos but no first-party registry package;
+      integrators land on community builds instead.

@@ -1,0 +1,170 @@
+generated: '2026-08-13'
+method: searched
+source: >-
+  https://www.zerobounce.net/docs/api-dashboard/api-error-codes and
+  https://www.zerobounce.net/docs/email-validation-api-quickstart/v2-status-codes
+docs: https://www.zerobounce.net/docs/api-dashboard/api-error-codes
+format: http-status
+rfc9457: false
+summary: >-
+  ZeroBounce splits its error surface in two, and only one half is an error surface in
+  the usual sense. TRANSPORT errors are plain HTTP status codes with no published JSON
+  envelope — no problem+json, no machine-readable `type`, `code` or `error` field is
+  documented, so an agent must branch on the status integer alone. DOMAIN outcomes are
+  not errors at all: a failed validation returns HTTP 200 with a `status` /`sub_status`
+  pair from a closed vocabulary of 7 statuses and 27 sub-statuses. Agents that treat 2xx
+  as success will silently accept spamtrap, abuse and do_not_mail results as valid
+  addresses, which is the single most consequential misread of this API.
+envelope:
+  documented: false
+  note: >-
+    Neither the error-codes page nor the quickstart publishes the JSON body returned with
+    a 4xx/5xx. The MCP server's own README documents an {error, message, details} shape,
+    but that is the MCP server's envelope, not the REST API's.
+
+http_errors:
+  - status: 400
+    title: Bad Request
+    cause: An error in the structure of the API request.
+    remediation: Recheck the request format against the endpoint documentation.
+    counts_toward_block: true
+    block_note: 100 bad requests in 1 minute triggers a 1-hour block.
+  - status: 403
+    title: Forbidden
+    cause: >-
+      The API Shield security feature has engaged. Part of ZeroBounce's dynamic
+      protection layer, not a credential failure.
+    remediation: Wait for the security measure to disable itself, then retry.
+  - status: 404
+    title: Not Found
+    cause: The endpoint being called does not exist.
+    remediation: Check the endpoint URL for typos against the documentation.
+    counts_toward_block: true
+    block_note: 100 requests to non-existent endpoints in 2 minutes triggers a 1-hour block.
+  - status: 405
+    title: Method Not Allowed
+    cause: Unsupported HTTP verb for the endpoint (e.g. GET against a POST-only endpoint).
+    remediation: Confirm the correct REST method in the documentation.
+  - status: 429
+    title: Too Many Requests
+    cause: A published rate limit was exceeded.
+    remediation: >-
+      Throttle. Note that ZeroBounce escalates past 429 into timed blocks of 1 minute to
+      1 day depending on the endpoint — see rate-limits/zerobounce-rate-limits.yml. No
+      Retry-After header is published.
+  - status: 500
+    title: Internal Server Error
+    cause: An issue in the ZeroBounce platform infrastructure.
+    remediation: Retry, then contact support.
+  - status: 520
+    title: Unexpected unknown error
+    cause: Transport / transit layer error (Cloudflare origin error).
+    remediation: Retry the request, or contact support if persistent.
+  - status: 524
+    title: Unexpected unknown error (timeout)
+    cause: Transport / transit layer timeout.
+    remediation: Retry the request, or contact support if persistent.
+
+domain_outcomes:
+  http_status: 200
+  envelope_fields:
+    - address
+    - status
+    - sub_status
+    - free_email
+    - did_you_mean
+    - account
+    - domain
+    - domain_age_days
+    - smtp_provider
+    - mx_found
+    - mx_record
+    - catchall_domain
+    - firstname
+    - lastname
+    - gender
+    - country
+    - region
+    - city
+    - zipcode
+    - processed_at
+  statuses:
+    - status: valid
+      meaning: Safe to email; ZeroBounce states a bounce rate under 2%.
+      action: send
+      sub_statuses:
+        - alias_address
+        - leading_period_removed
+        - alternate
+        - gold
+        - role_based_accept_all
+        - accept_all
+        - ai_agent_mailbox
+    - status: invalid
+      meaning: Address does not exist or cannot receive mail.
+      action: remove from list
+      sub_statuses:
+        - does_not_accept_mail
+        - failed_syntax_check
+        - possible_typo
+        - mailbox_not_found
+        - no_dns_entries
+        - mailbox_quota_exceeded
+        - unroutable_ip_address
+    - status: catch-all
+      meaning: >-
+        Domain accepts any recipient, so existence cannot be proven without sending. Verify+
+        (allow_phase_2) can resolve some of these to a definitive result.
+      action: hold or escalate to Verify+
+      sub_statuses:
+        - ai_agent_mailbox
+    - status: spamtrap
+      meaning: Believed to be a spam trap.
+      action: do not email
+      sub_statuses: []
+    - status: abuse
+      meaning: Known spam reporter / abuse account.
+      action: do not email
+      sub_statuses: []
+    - status: do_not_mail
+      meaning: Deliverable but should not be mailed — role, disposable, suppressed or toxic.
+      action: do not email
+      sub_statuses:
+        - role_based
+        - disposable
+        - role_based_catch_all
+        - mx_forward
+        - global_suppression
+        - possible_trap
+        - toxic
+    - status: unknown
+      meaning: Validation could not complete against the receiving server.
+      action: retry later
+      sub_statuses:
+        - antispam_system
+        - exception_occurred
+        - failed_smtp_connection
+        - forcible_disconnect
+        - greylisted
+        - mail_server_did_not_respond
+        - mail_server_temporary_error
+        - timeout_exceeded
+
+counts:
+  http_errors: 8
+  statuses: 7
+  sub_statuses: 27
+
+agent_guidance:
+  - >-
+    Never infer deliverability from the HTTP status. Branch on `status` first, then on
+    `sub_status`.
+  - >-
+    Treat `unknown` and `greylisted` as retryable; ZeroBounce documents greylisted
+    addresses as often resolving on resubmission.
+  - >-
+    `ai_agent_mailbox` (added 2026-07-14) marks a mailbox managed by an AI agent rather
+    than a monitored human inbox — it appears under both `valid` and `catch-all` and is
+    relevant to any agent deciding whether a human will read the message.
+  - >-
+    A 403 is not an auth failure here. Do not rotate credentials in response to one.

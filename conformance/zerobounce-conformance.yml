@@ -1,0 +1,166 @@
+generated: '2026-08-13'
+method: searched
+source: >-
+  https://trust.zerobounce.net/, https://www.zerobounce.net/security,
+  https://www.zerobounce.net/docs/api-dashboard/api-error-codes,
+  collections/zerobounce-api-v2-official.postman_collection.json,
+  live probes of every apis.yml baseURL host and every OpenAPI servers[] host
+summary: >-
+  ZeroBounce's conformance story is entirely compliance-side, not protocol-side. It holds
+  and publishes named security and privacy certifications on a real trust center, and it
+  meets the residency requirements that matter for email data. On the wire it conforms to
+  almost no cross-cutting API standard: no OpenAPI for the production v2 API, no OAuth or
+  OIDC, no RFC 9457 problem details, no RFC 8594 sunset headers, no RFC 9116 security.txt,
+  no RateLimit header standard, no pagination convention and no idempotency contract.
+
+compliance:
+  - id: soc2
+    conforms: true
+    evidence:
+      source: https://trust.zerobounce.net/
+      note: SOC 2 listed on the ZeroBounce trust center.
+  - id: iso27001
+    conforms: true
+    evidence:
+      source: https://trust.zerobounce.net/
+      note: ISO/IEC 27001 listed on the ZeroBounce trust center.
+  - id: pci-dss
+    conforms: true
+    evidence:
+      source: https://trust.zerobounce.net/
+      note: PCI DSS listed on the ZeroBounce trust center (payment handling for credit purchase).
+  - id: hipaa
+    conforms: true
+    evidence:
+      source: https://trust.zerobounce.net/
+      note: HIPAA listed on the ZeroBounce trust center.
+  - id: gdpr
+    conforms: true
+    evidence:
+      source: https://trust.zerobounce.net/
+      note: >-
+        GDPR listed on the trust center and backed operationally by the EU-only
+        api-eu.zerobounce.net residency endpoint.
+  - id: data-residency
+    conforms: true
+    evidence:
+      source: https://www.zerobounce.net/docs/api-dashboard/api-endpoints
+      note: >-
+        Separate US-only and EU-only API hosts where "validations and other interactions
+        only occur within" that region.
+
+standards:
+  - id: openapi
+    conforms: partial
+    evidence:
+      note: >-
+        The only OpenAPI ZeroBounce publishes is the ChatGPT-plugin spec for
+        members-api.zerobounce.net (2 operations, captured in openapi/). No OpenAPI,
+        Swagger or JSON-schema description of the 32-operation production v2 API exists.
+        Probed /openapi.json, /openapi.yaml, /swagger.json, /v2/openapi.json, /api-docs,
+        /swagger/v1/swagger.json and /docs on api, api-eu, members-api, bulkapi and www —
+        every one 404s or 403s, and www.zerobounce.net/docs/openapi.json returns the
+        Next.js HTML shell, not a spec. The nearest first-party machine-readable inventory
+        is the official Postman collection at github.com/zerobounce/postman-v2.
+  - id: asyncapi
+    conforms: false
+    evidence:
+      note: >-
+        No AsyncAPI document. Two per-request completion callbacks exist and are catalogued
+        in asyncapi/zerobounce-webhooks.yml.
+  - id: graphql
+    conforms: false
+    evidence:
+      note: No GraphQL surface. No /graphql endpoint on any host.
+  - id: grpc
+    conforms: false
+    evidence:
+      note: No .proto published in the GitHub org, on buf.build, or in the docs.
+  - id: mcp
+    conforms: true
+    evidence:
+      source: https://github.com/zerobounce/zerobounce-mcp
+      note: >-
+        Official MCP server on @modelcontextprotocol/sdk ^1.29.0, 16 tools, Apache-2.0.
+        Local stdio only — no hosted endpoint. See mcp/zerobounce-mcp.yml.
+  - id: a2a
+    conforms: false
+    evidence:
+      note: No A2A Agent Card on any host. See well-known/zerobounce-well-known.yml.
+  - id: oauth2
+    conforms: false
+    evidence:
+      note: Single account API key. No authorization server, no token endpoint, no scopes.
+  - id: oidc
+    conforms: false
+    evidence:
+      note: >-
+        No /.well-known/openid-configuration on any host. Okta Passkey is used for the
+        member dashboard login, not for API authorization.
+  - id: rfc9457
+    conforms: false
+    evidence:
+      source: https://www.zerobounce.net/docs/api-dashboard/api-error-codes
+      note: >-
+        No application/problem+json. Errors are bare HTTP statuses with no documented JSON
+        envelope. See errors/zerobounce-error-codes.yml.
+  - id: rfc9116
+    conforms: false
+    evidence:
+      note: >-
+        No /.well-known/security.txt on any host, despite a real disclosure page existing
+        at https://www.zerobounce.net/security.
+  - id: rfc8594
+    conforms: false
+    evidence:
+      note: >-
+        No Deprecation or Sunset headers, and no dated sunset for the legacy
+        api.zerobounce.net host. See lifecycle/zerobounce-lifecycle.yml.
+  - id: ratelimit-headers
+    conforms: false
+    evidence:
+      source: https://www.zerobounce.net/docs/api-dashboard/api-rate-limits
+      note: >-
+        Limits are published as prose numbers only. No RateLimit-*, no X-RateLimit-*, no
+        Retry-After documented. HTTP 429 is documented as the exhaustion status.
+  - id: idempotency
+    conforms: false
+    evidence:
+      note: >-
+        No idempotency key. The provider explicitly documents duplicate callbacks as
+        expected and billable.
+  - id: pagination
+    conforms: false
+    evidence:
+      note: No paginated endpoint in the published surface; bulk results are whole-file pulls.
+  - id: jsonapi
+    conforms: false
+  - id: odata
+    conforms: false
+  - id: scim
+    conforms: false
+  - id: fhir
+    conforms: false
+  - id: fapi
+    conforms: false
+  - id: psd2
+    conforms: false
+
+transport:
+  tls: true
+  tls_docs: https://www.zerobounce.net/docs/api-dashboard/tls-support
+  hsts: >-
+    Enabled on www.zerobounce.net (max-age 31536000) and returned by api.zerobounce.net
+    (max-age 15552000; includeSubDomains; preload). See
+    security/zerobounce-domain-security.yml.
+  dnssec: true
+  caa: true
+  spf: true
+  dmarc: true
+  dmarc_policy: reject
+
+counts:
+  compliance_conforming: 6
+  standards_conforming: 1
+  standards_partial: 1
+  standards_not_conforming: 15

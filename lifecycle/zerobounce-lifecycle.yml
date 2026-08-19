@@ -1,0 +1,88 @@
+generated: '2026-08-13'
+method: searched
+source: >-
+  https://status.zerobounce.net, https://www.zerobounce.net/updates,
+  https://www.zerobounce.net/docs/api-migration,
+  https://www.zerobounce.net/docs/api-dashboard/api-endpoints
+summary: >-
+  ZeroBounce runs a public status page and a dated product-updates feed, and publishes a
+  v1-to-v2 migration guide. It does NOT publish a deprecation policy, a sunset schedule,
+  an SLA, or RFC 8594 Deprecation/Sunset headers. The one live deprecation in flight —
+  api.zerobounce.net being demoted to "the previous endpoint" now serving EU traffic only
+  — is announced in a docs paragraph and a product update, with no dated sunset and no
+  runtime signal on the endpoint itself.
+
+versioning:
+  scheme: path segment
+  current: v2
+  previous: v1
+  migration_guide: https://www.zerobounce.net/docs/api-migration
+  breaking_change_policy: not published
+  note: >-
+    Additive change inside v2 is the norm: the ai_agent_mailbox sub-status was added on
+    2026-07-14 and regional endpoints in October 2025, both without a version bump.
+
+status_page:
+  url: https://status.zerobounce.net
+  http_status: 200
+  components_feed: https://status.zerobounce.net/uptime
+  api: https://status.zerobounce.net/api/
+  note: >-
+    Public status page with uptime history and a machine-readable status API — the
+    strongest operational-transparency artifact ZeroBounce publishes.
+
+deprecation:
+  policy_published: false
+  sunset_header: false
+  deprecation_header: false
+  rfc8594: false
+  in_flight:
+    - subject: https://api.zerobounce.net
+      state: legacy
+      evidence_verbatim: >-
+        "The previous ZeroBounce endpoint; this URL is currently only used for validations
+        and interactions within the EU"
+      source: https://www.zerobounce.net/docs/api-dashboard/api-endpoints
+      replacement:
+        - https://api-us.zerobounce.net
+        - https://api-eu.zerobounce.net
+      announced: '2025-07'
+      announcement_note: >-
+        Announced in the product updates feed as "New geolocation API coming October 1st,
+        2025" routing requests through region-specific endpoints.
+      sunset_date: null
+      runtime_signal: none
+      risk: >-
+        A US integration left pointed at api.zerobounce.net is now, by ZeroBounce's own
+        description, being served from the EU path — a silent data-residency change with
+        no header, no error and no dated deadline. This is the single most actionable
+        lifecycle gap on this API.
+    - subject: ZeroBounce API v1
+      state: superseded
+      replacement: v2
+      migration_guide: https://www.zerobounce.net/docs/api-migration
+      sunset_date: null
+      note: >-
+        v1 wrapper repos in the GitHub org have not been touched since 2018-2022, but no
+        shutdown date is published.
+
+sla:
+  published: false
+  uptime_commitment: null
+  note: >-
+    No public SLA document. ZeroBounce ONE advertises "VIP 24/7 support" and "faster file
+    processing" as tier benefits rather than as a contractual availability target.
+
+support:
+  contact: https://www.zerobounce.net/contact-us
+  hours: 24/7 (advertised)
+  enterprise: https://www.zerobounce.net/enterprise
+
+deprecated_operations_in_spec:
+  count: 0
+  source: openapi/zerobounce-validation-api-openapi.yml
+  note: 'No operation in the captured OpenAPI carries deprecated: true.'
+
+change_feed:
+  url: https://www.zerobounce.net/updates
+  see: changelog/zerobounce-changelog.yml

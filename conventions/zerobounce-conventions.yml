@@ -1,0 +1,139 @@
+generated: '2026-08-13'
+method: searched
+source: >-
+  https://www.zerobounce.net/docs/email-validation-api-quickstart,
+  https://www.zerobounce.net/docs/api-dashboard,
+  collections/zerobounce-api-v2-official.postman_collection.json
+summary: >-
+  ZeroBounce v2 is a flat, verb-in-the-path RPC-style REST API over HTTPS with a single
+  query/body API key, no idempotency support, no pagination, no request-id tracing and no
+  rate-limit response headers. Versioning is a fixed /v2 path segment; the version has
+  not moved since v2 launched, and additive changes (new sub-statuses, new regional
+  hosts) land inside it without a version bump.
+
+authentication:
+  style: api-key
+  transport: query parameter `api_key` on GET; JSON body or multipart form field on POST
+  headers: none
+  see: authentication/zerobounce-authentication.yml
+
+idempotency:
+  supported: false
+  header: null
+  scope: null
+  retention: null
+  note: >-
+    ZeroBounce publishes NO idempotency key, no request-deduplication and no safe-retry
+    contract. The provider states the opposite explicitly for callbacks: on greylist
+    processing, "duplicate requests are allowed. If you make the same request twice, you
+    can expect two callbacks. Each callback will be charged." For a credit-metered API
+    this matters — a retried POST /v2/validatebatch or bulkapi sendfile spends credits
+    again. No Idempotency pointer is emitted in apis.yml, because there is nothing to
+    point at.
+  agent_guidance: >-
+    Treat every credit-consuming POST as non-retryable. Reconcile with
+    GET /v2/getcredits and, for bulk jobs, with filestatus keyed on the returned file_id
+    rather than resending the file.
+
+pagination:
+  supported: false
+  style: none
+  note: >-
+    No listing endpoint in the published surface paginates. Bulk results are retrieved as
+    a whole CSV file via getfile keyed on file_id; getapiusage returns an aggregate for a
+    date range. There are no page, cursor, limit or offset parameters anywhere in the
+    first-party Postman collection.
+
+batching:
+  supported: true
+  endpoint: 'POST /v2/validatebatch'
+  max_items: 100
+  field: email_batch
+  rate: 30 requests/minute (40 on ZeroBounce ONE)
+  async_alternative: >-
+    bulkapi.zerobounce.net sendfile/filestatus/getfile — an asynchronous file job with an
+    optional return_url callback. This is the correct path above a few hundred addresses.
+
+field_expansion:
+  supported: false
+sparse_fieldsets:
+  supported: false
+metadata:
+  supported: false
+  note: >-
+    No customer-defined metadata field. Bulk file jobs carry caller context only through
+    the CSV columns declared with the *_column index parameters.
+
+request_tracing:
+  request_id_header: none documented
+  correlation:
+    - >-
+      Bulk jobs are correlated by the `file_id` returned from sendfile and echoed in the
+      return_url callback payload.
+  note: >-
+    No X-Request-Id / X-Correlation-Id is documented on any response, so a support ticket
+    cannot be anchored to a single request.
+
+versioning:
+  scheme: path segment
+  current: v2
+  path: '/v2/...'
+  legacy: >-
+    v1 exists (first-party v1 wrappers are archived in the GitHub org) and a migration
+    guide is published at https://www.zerobounce.net/docs/api-migration.
+  change_style: >-
+    Additive within v2. New sub-statuses (ai_agent_mailbox, July 2026) and new regional
+    hosts (api-us / api-eu, October 2025) shipped without a version change, so clients
+    must tolerate unknown `sub_status` values.
+  see: lifecycle/zerobounce-lifecycle.yml
+
+regions:
+  model: separate hostname per residency
+  hosts:
+    - https://api-us.zerobounce.net
+    - https://api-eu.zerobounce.net
+    - https://api.zerobounce.net
+  note: >-
+    Paths and parameters are identical across regions; only the host changes. The legacy
+    api.zerobounce.net host is documented by ZeroBounce as now serving EU only, which
+    means an unchanged US integration pointed at the legacy host has silently become an
+    EU-routed one.
+  bulk_host: https://bulkapi.zerobounce.net
+  bulk_note: >-
+    Bulk file operations run on a separate host that is NOT region-split, and is not
+    listed on ZeroBounce's own API-endpoints page even though it carries a third of the
+    published operation surface.
+
+error_envelope:
+  shape: not documented
+  transport_errors: HTTP status only
+  domain_errors: HTTP 200 with `status` / `sub_status`
+  see: errors/zerobounce-error-codes.yml
+
+rate_limit_signalling:
+  response_headers: none documented
+  status_on_exhaustion: 429
+  retry_after: not documented
+  see: rate-limits/zerobounce-rate-limits.yml
+
+content_types:
+  request:
+    - application/json (POST validatebatch, filters/add, filters/delete)
+    - multipart/form-data (bulkapi sendfile, scoring/sendfile, S3 operations)
+    - query string (all GET operations)
+  response:
+    - application/json
+    - text/csv (bulk getfile, scoring getfile)
+
+naming:
+  paths: lowercase, no separators (getcredits, getapiusage, validatebatch, guessformat)
+  parameters: snake_case (api_key, email_address_column, return_url, first_name)
+  json_fields: snake_case (sub_status, free_email, mx_found, domain_age_days)
+  note: >-
+    The MCP server exposes camelCase argument names (emailAddressColumn, returnUrl,
+    startDate) over the same snake_case REST parameters — a translation layer agents
+    should not assume applies to direct REST calls.
+
+webhooks:
+  supported: true
+  see: asyncapi/zerobounce-webhooks.yml

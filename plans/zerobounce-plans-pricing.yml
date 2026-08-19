@@ -1,0 +1,120 @@
+generated: '2026-08-13'
+method: searched
+source: https://www.zerobounce.net/pricing
+docs: https://www.zerobounce.net/pricing
+summary: >-
+  ZeroBounce sells validation as prepaid credits, available either as a monthly
+  ZeroBounce ONE subscription or as pay-as-you-go packs, with a permanent free tier and
+  a sales-gated enterprise band above 1M credits/month. Credits are the metering unit for
+  every product: 1 credit per email validated or scored, 20 credits per Email Finder
+  query. The public pricing page states the entry subscription price and the free-tier
+  allowances, but does NOT publish the per-credit pay-as-you-go rate card as machine- or
+  page-readable numbers, so per-credit prices are recorded as null rather than guessed.
+plan_count: 4
+currency: USD
+
+plans:
+  - name: Freemium
+    id: freemium
+    price: 0
+    currency: USD
+    billing_period: monthly
+    included_quota:
+      validation_credits: 100
+      refill: monthly
+      email_finder_credits: 10
+      inbox_placement_tests: 1
+      email_server_tests: 1
+      blacklist_monitors: 1
+    overage: null
+    limits:
+      rate_limits: standard
+      excluded_features:
+        - Activity Data
+        - Email Warmup
+        - DMARC Monitor
+    note: Free tier; credits refill monthly rather than accruing.
+
+  - name: ZeroBounce ONE
+    id: zerobounce-one
+    price: 99
+    price_qualifier: starting at
+    currency: USD
+    billing_period: monthly
+    annual_discount_pct: 20
+    included_quota:
+      validation_credits_min: 10000
+      refill: monthly
+      credits_expire: false
+      warmup_seeds: included
+      inbox_placement_tests: included
+      email_finder: included
+      domain_searches: included
+      blacklist_monitors: included
+      dmarc_monitor: included
+      email_server_tests: included
+      activity_data: included
+      gold_recipients: included
+    overage: null
+    overage_note: >-
+      Credit quantity is customizable above the 10,000/month minimum; the page does not
+      publish an overage rate.
+    limits:
+      rate_limits: premium
+      rate_limit_note: >-
+        ZeroBounce ONE raises published API limits — 100,000 requests/10s on validation
+        (vs 80,000), 40 batch requests/min (vs 30), 100,000/hr on getcredits and activity
+        (vs 80,000), 1,000/hr on getapiusage (vs 800). See rate-limits/.
+      support: VIP 24/7
+      file_processing: faster
+
+  - name: Pay-As-You-Go Credits
+    id: payg
+    price: null
+    price_note: >-
+      Per-credit rate card is not published as readable values on the pricing page; the
+      page advertises "15% off on Pay-As-You-Go Credits and autopay" without stating the
+      base rate. Recorded null rather than estimated.
+    currency: USD
+    billing_period: one-time
+    included_quota:
+      credits_expire: false
+    overage: null
+    limits:
+      rate_limits: standard
+    note: Prepaid credit packs, no subscription. Same 1-credit-per-validation metering.
+
+  - name: Enterprise
+    id: enterprise
+    price: null
+    price_note: Contact sales.
+    currency: USD
+    billing_period: custom
+    included_quota:
+      threshold: over 1,000,000 credits per month
+    overage: null
+    limits:
+      rate_limits: custom
+      note: >-
+        ZeroBounce directs customers needing limits above the published ceilings to
+        contact support. Enterprise page: https://www.zerobounce.net/enterprise
+    sales_gated: true
+
+credit_model:
+  unit: credit
+  consumption:
+    - action: validate one email
+      credits: 1
+    - action: AI-score one email
+      credits: 1
+    - action: Email Finder query
+      credits: 20
+    - action: validate a sandbox test address
+      credits: 0
+      note: >-
+        The documented @example.com sandbox addresses consume no credits. See
+        sandbox/zerobounce-sandbox.yml.
+  expiry: >-
+    Credits never expire on ZeroBounce ONE and on pay-as-you-go packs; Freemium credits
+    refill monthly and do not accrue.
+  balance_endpoint: 'GET /v2/getcredits'

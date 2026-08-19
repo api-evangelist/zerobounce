@@ -1,0 +1,114 @@
+generated: '2026-08-13'
+method: searched
+source: https://www.zerobounce.net/docs/api-dashboard/api-rate-limits
+docs: https://www.zerobounce.net/docs/api-dashboard/api-rate-limits
+summary: >-
+  ZeroBounce publishes per-endpoint rate limits with an explicit premium tier for
+  ZeroBounce ONE customers, and — unusually — publishes the PENALTY as well as the limit:
+  exceeding a limit produces a timed block rather than a plain 429, and repeated bad
+  requests or bad API keys produce blocks of their own. What ZeroBounce does NOT publish
+  is any runtime signal: no RateLimit-* / X-RateLimit-* response headers and no
+  Retry-After are documented anywhere, so a client cannot see how close it is to a block
+  and cannot learn the block duration from the response. The documented exhaustion status
+  is HTTP 429 Too Many Requests (from the API error codes page).
+limit_count: 6
+
+response_headers:
+  documented: false
+  headers: []
+  retry_after: false
+  note: >-
+    Checked the rate-limits page, the API error-codes page and the quickstart. ZeroBounce
+    documents no rate-limit response headers and no Retry-After. Agents must implement
+    blind backoff against a fixed, published number.
+
+exhaustion:
+  http_status: 429
+  status_name: Too Many Requests
+  body: not documented
+  source: https://www.zerobounce.net/docs/api-dashboard/api-error-codes
+  note: >-
+    A separate HTTP 403 Forbidden is documented as the "API Shield" security feature
+    engaging — a dynamic protection that a client must simply wait out.
+
+limits:
+  - id: get_credits_v2
+    endpoint: 'GET /v2/getcredits'
+    scope: per-api-key
+    window: 1 hour
+    limit: 80000
+    premium_limit: 100000
+    premium_tier: ZeroBounce ONE
+    on_exceed: temporary block for 1 day
+    bad_key_penalty: 200 bad API key requests in 1 hour triggers a 1-day block
+
+  - id: validation_v2
+    endpoint: 'GET /v2/validate'
+    scope: per-api-key
+    window: 10 seconds
+    limit: 80000
+    premium_limit: 100000
+    premium_tier: ZeroBounce ONE
+    on_exceed: temporary block for 1 minute
+    bad_key_penalty: 200 bad API key requests in 1 hour triggers a 1-hour block
+
+  - id: get_api_usage_v2
+    endpoint: 'GET /v2/getapiusage'
+    scope: per-api-key
+    window: 1 hour
+    limit: 800
+    premium_limit: 1000
+    premium_tier: ZeroBounce ONE
+    on_exceed: temporary block for 1 hour
+    bad_request_penalty: 200 bad requests in 1 hour triggers a 1-hour block
+
+  - id: batch_validate
+    endpoint: 'POST /v2/validatebatch'
+    scope: per-api-key
+    window: 1 minute
+    limit: 30
+    premium_limit: 40
+    premium_tier: ZeroBounce ONE
+    batch_size_max: 100
+    batch_size_unit: emails per request
+    on_exceed: temporary 10-minute cooling-off period
+    bad_request_penalty: 200 bad requests in 1 hour triggers a 1-hour block
+
+  - id: activity_v2
+    endpoint: 'GET /v2/activity'
+    scope: per-api-key
+    window: 1 hour
+    limit: 80000
+    premium_limit: 100000
+    premium_tier: ZeroBounce ONE
+    on_exceed: temporary block for 1 hour
+
+  - id: global_bad_requests
+    endpoint: any endpoint
+    scope: per-api-key
+    window: 1 minute
+    limit: 100
+    limit_unit: bad requests
+    on_exceed: temporary block for 1 hour
+    note: >-
+      A "bad request" is a malformed call, e.g. omitting the email parameter. Separately,
+      100 requests to a NON-EXISTENT endpoint in 2 minutes also triggers a 1-hour block —
+      which makes blind endpoint discovery against this API self-defeating.
+
+tiers:
+  - name: Standard
+    note: Default limits above.
+  - name: ZeroBounce ONE
+    note: >-
+      Premium limits roughly 20-25% above standard, included with the ZeroBounce ONE
+      subscription. See plans/zerobounce-plans-pricing.yml.
+  - name: Custom
+    note: ZeroBounce directs customers needing higher limits to contact support.
+
+quota_model:
+  unit: credit
+  note: >-
+    Rate limits are separate from the credit quota. 1 credit is consumed per email
+    validated or scored; an Email Finder query costs 20 credits. Sandbox test addresses
+    consume no credits. Credit balance is readable at runtime via GET /v2/getcredits.
+  credits_endpoint: 'GET /v2/getcredits'
