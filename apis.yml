@@ -133,6 +133,10 @@ apis:
   tags:
   - Email Validation
   - Bulk Processing
+  - Webhook
+  tags_raw:
+  - Email Validation
+  - Bulk Processing
   - Webhooks
   properties:
   - type: Documentation
