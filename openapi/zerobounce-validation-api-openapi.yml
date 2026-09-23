@@ -1,4 +1,4 @@
-openapi: 3.0.1
+openapi: 3.2.0
 info:
   title: ZeroBounce Validate Email plugin Validation API
   description: Plugin that can validate email addresses. Send the email address you want to validate and the ZeroBounce API will validate that email and return information on it.
@@ -11,7 +11,7 @@ paths:
   /api/validation/chatgpt-single-email-validation/:
     post:
       operationId: validate
-      summary: Validate an email address. Allows a maximum of 3 requests per day for an unauthenticated user. For more requests please register on ZeroBounce.net and get an API key - https://www.zerobounce.net/members/signin/register.
+      summary: Validate an email address.
       requestBody:
         required: true
         content:
@@ -30,7 +30,7 @@ paths:
   /api/validation/chatgpt-batch-validation/:
     post:
       operationId: validateBatch
-      summary: Validate a list of email addresses. Requires a ZeroBounce API key. The user can get an API key by registering on ZeroBounce.net - https://www.zerobounce.net/members/signin/register.
+      summary: Validate a list of email addresses.
       requestBody:
         required: true
         content:
@@ -59,18 +59,6 @@ components:
         email:
           type: string
           description: The email you want to validate.
-    validateBatchRequest:
-      type: object
-      required:
-      - api_key
-      - email_batch
-      properties:
-        api_key:
-          type: string
-          description: The user's ZeroBounce API key.
-        emails:
-          type: string
-          description: A string representing a comma-separated list of emails to validate.
     validateBatchResponse:
       type: array
       description: An Array of validated emails.
@@ -115,3 +103,15 @@ components:
           type: string
         processed_at:
           type: string
+    validateBatchRequest:
+      type: object
+      required:
+      - api_key
+      - email_batch
+      properties:
+        api_key:
+          type: string
+          description: The user's ZeroBounce API key.
+        emails:
+          type: string
+          description: A string representing a comma-separated list of emails to validate.
