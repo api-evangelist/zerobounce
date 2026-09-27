@@ -48,17 +48,6 @@ paths:
       - Validation
 components:
   schemas:
-    validateEmailRequest:
-      type: object
-      required:
-      - email
-      properties:
-        api_key:
-          type: string
-          description: The user's ZeroBounce API key. Optional. The user can perform up to 3 requests per day without providing this API key.
-        email:
-          type: string
-          description: The email you want to validate.
     validateBatchResponse:
       type: array
       description: An Array of validated emails.
@@ -103,6 +92,17 @@ components:
           type: string
         processed_at:
           type: string
+    validateEmailRequest:
+      type: object
+      required:
+      - email
+      properties:
+        api_key:
+          type: string
+          description: The user's ZeroBounce API key. Optional. The user can perform up to 3 requests per day without providing this API key.
+        email:
+          type: string
+          description: The email you want to validate.
     validateBatchRequest:
       type: object
       required:

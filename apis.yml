@@ -13,17 +13,20 @@ description: >-
   an official MCP server and first-party SDKs across nine languages.
 type: Index
 deliveryModel:
-  model: unknown
+  model: saas
+  license_evidence:
+    not_product:
+    - zerobounce/zerobounce-mcp
   open_source: unknown
   commercial: true
   callable_host: true
-  label: Delivery model not determined — needs a product licence on record
+  label: Hosted service · you call their endpoint
   confidence: low
   source:
   - openapi
   - pricing
-  - repository-unlicensed
-  generated: '2026-08-28'
+  - repository-not-product
+  generated: '2026-09-25'
   method: derived
 accessModel:
   pricing: freemium
@@ -46,6 +49,17 @@ accessModel:
     keyless browser verifier plus 3 free unauthenticated plugin validations per day.
 image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/zerobounce.png
 tags:
+  - Email Verification
+  - Email Deliverability
+  - Marketing
+  - Lead Scoring
+  - Anti-Spam
+  - Data Quality
+  - Email Finder
+  - Deliverability Monitoring
+  - DMARC
+  - Email
+tags_raw:
   - Email Validation
   - Email Deliverability
   - Email Verification
@@ -56,6 +70,7 @@ tags:
   - Email Finder
   - Deliverability Monitoring
   - DMARC
+  - Email
 url: >-
   https://raw.githubusercontent.com/api-evangelist/zerobounce/refs/heads/main/apis.yml
 created: '2026-05-11'
@@ -73,6 +88,10 @@ apis:
   humanURL: https://www.zerobounce.net/docs/email-validation-api-quickstart
   baseURL: https://api.zerobounce.net/v2
   tags:
+  - Email Verification
+  - Email Deliverability
+  - Lead Scoring
+  tags_raw:
   - Email Validation
   - Email Deliverability
   - Lead Scoring
@@ -106,6 +125,10 @@ apis:
   humanURL: https://www.zerobounce.net/docs/api-dashboard/api-endpoints
   baseURL: https://api-us.zerobounce.net/v2
   tags:
+  - Email Verification
+  - US Region
+  - Data Residency
+  tags_raw:
   - Email Validation
   - US Region
   - Data Residency
@@ -124,6 +147,10 @@ apis:
   humanURL: https://www.zerobounce.net/docs/email-validation-api-quickstart
   baseURL: https://api-eu.zerobounce.net/v2
   tags:
+  - Email Verification
+  - EU Region
+  - Data Residency
+  tags_raw:
   - Email Validation
   - EU Region
   - Data Residency
@@ -144,7 +171,7 @@ apis:
   humanURL: https://www.zerobounce.net/docs/email-validation-api-quickstart/v2-file-management-api
   baseURL: https://bulkapi.zerobounce.net
   tags:
-  - Email Validation
+  - Email Verification
   - Bulk Processing
   - Webhook
   tags_raw:
@@ -186,6 +213,10 @@ apis:
   humanURL: https://github.com/zerobounce/zerobounce-mcp
   baseURL: https://github.com/zerobounce/zerobounce-mcp
   tags:
+  - MCP
+  - AI Agents
+  - Email Verification
+  tags_raw:
   - MCP
   - AI Agents
   - Email Validation
