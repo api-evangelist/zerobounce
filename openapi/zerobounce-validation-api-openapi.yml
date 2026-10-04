@@ -48,23 +48,6 @@ paths:
       - Validation
 components:
   schemas:
-    validateBatchRequest:
-      type: object
-      required:
-      - api_key
-      - email_batch
-      properties:
-        api_key:
-          type: string
-          description: The user's ZeroBounce API key.
-        emails:
-          type: string
-          description: A string representing a comma-separated list of emails to validate.
-    validateBatchResponse:
-      type: array
-      description: An Array of validated emails.
-      items:
-        $ref: '#/components/schemas/validateEmailResponse'
     validateEmailResponse:
       type: object
       properties:
@@ -104,6 +87,23 @@ components:
           type: string
         processed_at:
           type: string
+    validateBatchResponse:
+      type: array
+      description: An Array of validated emails.
+      items:
+        $ref: '#/components/schemas/validateEmailResponse'
+    validateBatchRequest:
+      type: object
+      required:
+      - api_key
+      - email_batch
+      properties:
+        api_key:
+          type: string
+          description: The user's ZeroBounce API key.
+        emails:
+          type: string
+          description: A string representing a comma-separated list of emails to validate.
     validateEmailRequest:
       type: object
       required:
