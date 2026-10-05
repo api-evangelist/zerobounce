@@ -1,0 +1,12 @@
+{
+ "url": "https://www.zerobounce.net/.well-known/openapi.yaml",
+ "requested_url": "https://www.zerobounce.net/.well-known/openapi.yaml",
+ "status": 200,
+ "content_type": "text/yaml",
+ "bytes": 4240,
+ "sha256": "888c83981783e1147b1aa47760e6f3fe4f37e7e66f36b50c7d43e7a0fa77d432",
+ "fetched_at": "2026-10-04",
+ "fetched_by": "APIEvangelist-Harvest/1.0 (+https://apievangelist.com)",
+ "match": "byte-identical",
+ "note": "Re-fetched from the provider by verify-openapi-sources.py; the archived file is byte-identical to what the provider serves."
+}
