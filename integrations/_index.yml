@@ -218,32 +218,6 @@
     detected: '2026-10-21'
   status: not-a-workflow
   arazzo: null
-- slug: zerobounce-salesforce-own
-  label: Salesforce (own)
-  partner: salesforce
-  partner_name: Salesforce (own)
-  category: accountBasedMarketing
-  type: marketplace
-  marketplace: own
-  channel: partner-built
-  evidence: https://appexchange.salesforce.com/appxListingDetail?listingId=a0N4V00000IM29XUAT
-  source: edge
-  relationship: platform-app
-  status: not-a-workflow
-  arazzo: null
-- slug: zerobounce-hubspot-own
-  label: HubSpot (own)
-  partner: hubspot
-  partner_name: HubSpot (own)
-  category: EMAIL
-  type: marketplace
-  marketplace: own
-  channel: partner-built
-  evidence: https://ecosystem.hubspot.com/marketplace/listing/zerobounce-email-validation
-  source: edge
-  relationship: platform-app
-  status: not-a-workflow
-  arazzo: null
 - slug: zerobounce-mozilla-firefox-add-ons-amo
   label: Mozilla Firefox Add-ons (AMO)
   partner_name: Mozilla Firefox Add-ons (AMO)
@@ -270,5 +244,44 @@
       to mirror.
     detected_by: sweep-browser-extension-stores.py
     detected: '2026-10-21'
+  status: not-a-workflow
+  arazzo: null
+- slug: zerobounce-salesforce-own
+  label: Salesforce (own)
+  partner: salesforce
+  partner_name: Salesforce (own)
+  category: accountBasedMarketing
+  type: marketplace
+  marketplace: own
+  channel: partner-built
+  evidence: https://appexchange.salesforce.com/appxListingDetail?listingId=a0N4V00000IM29XUAT
+  source: edge
+  relationship: platform-app
+  status: not-a-workflow
+  arazzo: null
+- slug: zerobounce-hubspot-own
+  label: HubSpot (own)
+  partner: hubspot
+  partner_name: HubSpot (own)
+  category: EMAIL
+  type: marketplace
+  marketplace: own
+  channel: partner-built
+  evidence: https://ecosystem.hubspot.com/marketplace/listing/zerobounce-email-validation
+  source: edge
+  relationship: platform-app
+  status: not-a-workflow
+  arazzo: null
+- slug: zerobounce-wix-own
+  label: Wix (own)
+  partner: wix
+  partner_name: Wix (own)
+  category: Email
+  type: marketplace
+  marketplace: own
+  channel: partner-built
+  evidence: https://www.wix.com/app-market/developer/zerobounce
+  source: edge
+  relationship: platform-app
   status: not-a-workflow
   arazzo: null
