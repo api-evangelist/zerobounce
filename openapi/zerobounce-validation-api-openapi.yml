@@ -115,3 +115,9 @@ components:
           type: string
         processed_at:
           type: string
+x-provenance:
+  method: harvested
+  publisher: ZeroBounce
+  source: https://www.zerobounce.net/.well-known/openapi.yaml
+  note: split by refine-openapis from the provider's own published document, verified by fetch (openapi/_original/*.fetch.json);
+    stamped by stamp-openapi-provenance.py (roadmap#793)
