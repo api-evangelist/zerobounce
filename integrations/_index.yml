@@ -246,6 +246,37 @@
     detected: '2026-10-21'
   status: not-a-workflow
   arazzo: null
+- slug: zerobounce-packagist
+  label: Packagist
+  partner: packagist
+  partner_name: Packagist
+  category: official SDK (PHP)
+  type: register
+  channel: package-registry
+  evidence: https://packagist.org/packages/zero-bounce/sdk
+  source: edge
+  relationship: distribution-channel
+  contract_reference:
+    register: Packagist (public registry JSON)
+    spec_file: null
+    language: PHP
+    packages:
+    - name: zero-bounce/sdk
+      version: 2.1.11
+      released: '2026-08-14'
+      released_field: time
+      lapsed: false
+      page: https://packagist.org/packages/zero-bounce/sdk
+      repo_leg: domain:zerobounce.net
+      publisher_leg: email:zerobounce.net
+      matched_by: domain
+    current: true
+    signal_note: 'an official package on the registry: distribution, not an integration; lapsed = no release in
+      24 months'
+    detected_by: sweep-php-dart-elixir-package-registries.py
+    detected: '2026-10-22'
+  status: not-a-workflow
+  arazzo: null
 - slug: zerobounce-salesforce-own
   label: Salesforce (own)
   partner: salesforce
@@ -285,34 +316,29 @@
   relationship: platform-app
   status: not-a-workflow
   arazzo: null
-- slug: zerobounce-packagist
-  label: Packagist
-  partner: packagist
-  partner_name: Packagist
-  category: official SDK (PHP)
-  type: register
-  channel: package-registry
-  evidence: https://packagist.org/packages/zero-bounce/sdk
+- slug: zerobounce-adobe-experience-cloud-own
+  label: Adobe Experience Cloud (own)
+  partner: adobe-experience-cloud
+  partner_name: Adobe Experience Cloud (own)
+  category: Adobe Exchange Experience Cloud listing (Experience Platform, Journey Optimizer)
+  type: marketplace
+  marketplace: own
+  channel: partner-built
+  evidence: https://exchange.adobe.com/apps/ec/600256
   source: edge
-  relationship: distribution-channel
-  contract_reference:
-    register: Packagist (public registry JSON)
-    spec_file: null
-    language: PHP
-    packages:
-    - name: zero-bounce/sdk
-      version: 2.1.11
-      released: '2026-08-14'
-      released_field: time
-      lapsed: false
-      page: https://packagist.org/packages/zero-bounce/sdk
-      repo_leg: domain:zerobounce.net
-      publisher_leg: email:zerobounce.net
-      matched_by: domain
-    current: true
-    signal_note: 'an official package on the registry: distribution, not an integration; lapsed = no release in
-      24 months'
-    detected_by: sweep-php-dart-elixir-package-registries.py
-    detected: '2026-10-22'
+  relationship: platform-app
+  status: not-a-workflow
+  arazzo: null
+- slug: zerobounce-marketo-own
+  label: Marketo (own)
+  partner: marketo
+  partner_name: Marketo (own)
+  category: Adobe Exchange Experience Cloud listing (Marketo Engage)
+  type: marketplace
+  marketplace: own
+  channel: partner-built
+  evidence: https://exchange.adobe.com/apps/ec/600232
+  source: edge
+  relationship: platform-app
   status: not-a-workflow
   arazzo: null
